@@ -101,7 +101,7 @@
   /* EL ESTUDIO: se dibuja con el scroll */
   .pin{position:relative}
   .pin .st{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
-  #estudio .pin{height:240vh}
+  #estudio .pin{height:165vh}
   .estudio{display:grid;gap:30px;align-items:center}
   @media(min-width:900px){.estudio{grid-template-columns:1fr 1fr;gap:60px}}
   .presentacion p{margin:0 0 14px;color:var(--bone2);font-size:1.02rem}
@@ -218,6 +218,11 @@
     clip-path:inset(calc((1 - var(--v,0))*100%) 0 0 0);filter:grayscale(calc(1 - var(--c,0))) contrast(1.08)}
   .eq .tw-eq .tw-f::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(10,7,7,.85))}
   .eq .tw-eq .tw-f img{transform:scale(calc(1.15 - var(--v,0)*.15))}
+  /* Foto recortada en el panel (persona sin fondo, PNG): sale sobre un halo rojo, entera y apoyada abajo */
+  .eq .tw-eq .tw-f.recorte{background:radial-gradient(ellipse 70% 55% at 50% 72%,rgba(200,16,46,.55),rgba(200,16,46,.12) 55%,transparent 75%),var(--ink2)!important;border:1px solid var(--line)}
+  .eq .tw-eq .tw-f.recorte::before{content:"";position:absolute;left:8%;right:8%;top:8%;bottom:0;border:1px solid rgba(200,16,46,.35);border-bottom:0;border-radius:50% 50% 0 0/38% 38% 0 0;pointer-events:none}
+  .eq .tw-eq .tw-f.recorte img{object-fit:contain!important;object-position:center bottom!important;position:relative;filter:drop-shadow(0 20px 30px rgba(0,0,0,.6));transform:translateY(calc((1 - var(--v,0))*40px)) scale(calc(1.08 - var(--v,0)*.08));transform-origin:50% 100%}
+  .eq .tw-eq .tw-f.recorte::after{background:linear-gradient(transparent 80%,rgba(10,7,7,.7))}
   .eq .tw-eq .tw-f span{font:800 9rem/1 var(--goth)!important;color:var(--blood);opacity:.8!important}
   .eq .tw-eq h3{font:800 clamp(3.2rem,8vw,6rem)/.9 var(--goth)!important;margin:0 0 14px!important}
   .eq .tw-eq .tw-e{font:700 .95rem/1.2 var(--cond)!important;letter-spacing:.3em!important;color:var(--blood2)!important;margin:0 0 20px!important;display:flex;align-items:center;gap:12px}
@@ -642,6 +647,9 @@
     hdr.classList.toggle('solid',y>40);
     hdr.style.setProperty('--hdr',(y>lastY&&y>400)?'-100%':'0');
     lastY=y;
+    document.querySelectorAll('#equipoBox .tw-f').forEach(function(f){
+      var im=f.querySelector('img'); if(im) f.classList.toggle('recorte',/\.png($|\?)/i.test(im.getAttribute('src')||''));
+    });
     if(reduce) return;
 
     document.querySelectorAll('[data-sc]').forEach(function(el){
