@@ -170,7 +170,7 @@
   .g-t .g-z::before{content:"";display:inline-block;width:14px;height:2px;background:var(--blood2);vertical-align:middle;margin-right:8px}
   .g-t:focus-visible{outline:2px solid var(--blood2);outline-offset:3px}
   .gal-mas{display:flex;margin:34px auto 0}
-  .gal-mas[hidden]{display:none}
+  [hidden]{display:none!important} /* lo que el estudio deja vacío en su panel no sale */
 
   /* LUPA (opcional: sale si el estudio marca una foto en su panel) */
   .lupa-g{display:grid;gap:clamp(30px,5vw,70px);align-items:center}
@@ -606,34 +606,71 @@
 
 <!-- Contenido con el que se entrega la web. Lo que el estudio cambie en su panel lo sustituye. -->
 <script type="application/json" id="tw-inicial">{
-  "eslogan": "Realismo, blackwork y línea fina en un estudio tranquilo, limpio y sin prisas.",
-  "presentacion": "Cada tatuaje empieza con una charla. Nos cuentas tu idea, la dibujamos para ti y no tocamos la aguja hasta que te encanta.\n\nMaterial de un solo uso, cita privada y todo el tiempo que haga falta. Y el papeleo, desde tu móvil.",
+  "eslogan": "Tinta con alma, hecha a mano",
+  "presentacion": "Somos un estudio de tatuajes en pleno centro. Cada diseño se dibuja desde cero para ti: nada de catálogos ni copias. Trabajamos con material desechable, tintas veganas y todo el tiempo que haga falta para que salgas enamorado de tu pieza.",
   "telefono": "600 000 000",
   "whatsapp": "600 000 000",
-  "email": "hola@estudioprueba.es",
-  "instagram": "estudio.prueba",
-  "direccion": "Calle Ejemplo, 1, Córdoba",
+  "email": "",
+  "instagram": "",
+  "direccion": "Plaza de las Tendillas, Córdoba",
   "horario": {
     "lunes": "",
-    "martes": "10:00 – 14:00 y 17:00 – 21:00",
-    "miercoles": "10:00 – 14:00 y 17:00 – 21:00",
-    "jueves": "10:00 – 14:00 y 17:00 – 21:00",
-    "viernes": "10:00 – 14:00 y 17:00 – 21:00",
-    "sabado": "10:00 – 14:00",
+    "martes": "10:30 – 14:00 y 17:00 – 21:00",
+    "miercoles": "10:30 – 14:00 y 17:00 – 21:00",
+    "jueves": "10:30 – 14:00 y 17:00 – 21:00",
+    "viernes": "10:30 – 14:00 y 17:00 – 21:00",
+    "sabado": "10:30 – 14:00",
     "domingo": ""
   },
-  "horarioNota": "Solo con cita previa.",
+  "horarioNota": "Trabajamos con cita previa. Las consultas son gratis.",
   "servicios": [
-    {"nombre": "Pequeño", "descripcion": "Piezas de hasta unos 5 cm: letras, símbolos, línea fina.", "precio": "Desde 60 €"},
-    {"nombre": "Mediano", "descripcion": "Diseño a medida en una sola sesión.", "precio": "Desde 150 €"},
-    {"nombre": "Realismo", "descripcion": "Retratos y piezas realistas en blanco y negro o color.", "precio": "Por sesión"},
-    {"nombre": "Cover up", "descripcion": "Tapamos o renovamos un tatuaje antiguo.", "precio": "Consultar"}
+    {
+      "nombre": "Tatuaje pequeño",
+      "descripcion": "Piezas de hasta 5 cm: letras, símbolos y línea fina.",
+      "precio": "Desde 60 €"
+    },
+    {
+      "nombre": "Pieza mediana",
+      "descripcion": "Diseño propio de unos 10 a 15 cm, con sombras.",
+      "precio": "Desde 150 €"
+    },
+    {
+      "nombre": "Sesión completa",
+      "descripcion": "Para mangas, espaldas y piezas grandes. Unas 5 horas.",
+      "precio": "350 € la sesión"
+    },
+    {
+      "nombre": "Cover up",
+      "descripcion": "Tapamos o renovamos ese tatuaje que ya no te gusta.",
+      "precio": "Consultar"
+    },
+    {
+      "nombre": "Diseño a medida",
+      "descripcion": "Te dibujamos la idea antes de la cita y la ajustamos contigo.",
+      "precio": "Gratis con la cita"
+    }
   ],
   "preguntas": [
-    {"pregunta": "¿Cómo pido cita?", "respuesta": "Escríbenos por WhatsApp con tu idea, el tamaño y la zona. Te contestamos con precio y fechas."},
-    {"pregunta": "¿Hay que dejar señal?", "respuesta": "Sí, para reservar tu día. Se descuenta del precio final."},
-    {"pregunta": "¿Puedo tatuarme si soy menor?", "respuesta": "Solo con el consentimiento firmado por tu padre, madre o tutor legal, que tiene que venir contigo."},
-    {"pregunta": "¿Cómo lo cuido después?", "respuesta": "Te explicamos los cuidados al terminar y te los llevas por escrito."}
+    {
+      "pregunta": "¿Tengo que dejar señal?",
+      "respuesta": "Sí, 50 € al reservar, que se descuentan del precio final del tatuaje."
+    },
+    {
+      "pregunta": "¿Duele mucho?",
+      "respuesta": "Depende de la zona y de cada persona. Vamos a tu ritmo y paramos cuando lo necesites."
+    },
+    {
+      "pregunta": "¿Cómo lo cuido después?",
+      "respuesta": "Te damos las instrucciones por escrito y un film protector. Crema, nada de sol ni piscina durante dos semanas."
+    },
+    {
+      "pregunta": "¿Puedo traer mi propio diseño?",
+      "respuesta": "Claro. Lo adaptamos a tu piel y a la zona para que quede perfecto con los años."
+    },
+    {
+      "pregunta": "¿Tatuáis a menores?",
+      "respuesta": "No. Hace falta ser mayor de 18 años y traer el DNI el día de la cita."
+    }
   ]
 }</script>
 <script src="https://motor-consentimientos.vercel.app/tachan-web.js" defer></script>
