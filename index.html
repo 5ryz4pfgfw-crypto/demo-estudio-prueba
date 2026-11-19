@@ -188,6 +188,30 @@
     font:600 .85rem/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;padding:11px 16px;white-space:nowrap;transition:opacity .3s}
   .lupa-caja.usada .lupa-pista{opacity:0}
 
+  /* EL ESTUDIO POR DENTRO (fotos del local, opcional) */
+  .local-cab{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:16px 30px;margin-bottom:30px}
+  .local-cab h2{margin:0}
+  .local-nav{display:flex;align-items:center;gap:12px;font:700 .9rem/1 var(--cond);letter-spacing:.2em;color:var(--mut)}
+  .local-nav b{color:var(--bone)}
+  .local-nav button{width:50px;height:50px;border-radius:50%;border:1px solid var(--line);background:transparent;color:var(--bone);font-size:1.3rem;cursor:pointer;transition:.2s}
+  .local-nav button:hover{border-color:var(--blood);background:var(--blood)}
+  .local-pista{display:flex;gap:16px;overflow-x:auto;scroll-snap-type:x mandatory;scrollbar-width:none;padding:10px 5vw 30px;margin:0 -5vw;-webkit-overflow-scrolling:touch;cursor:grab}
+  .local-pista::-webkit-scrollbar{display:none}
+  .local-pista.arrastrando{cursor:grabbing;scroll-snap-type:none}
+  .l-card{flex:0 0 min(78vw,420px);margin:0;scroll-snap-align:center;position:relative;cursor:zoom-in;
+    transform:rotate(calc((1 - var(--p,1)) * var(--giro,0deg))) translateY(calc((1 - var(--p,1)) * 80px));opacity:calc(.2 + var(--p,1) * .8)}
+  .l-card:nth-child(odd){--giro:-6deg}.l-card:nth-child(even){--giro:5deg}
+  .l-card .l-img{aspect-ratio:4/5;overflow:hidden;background:var(--ink3);border:1px solid var(--line)}
+  .l-card img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(1.12) translateX(var(--px,0px));transition:filter .4s;filter:grayscale(.4)}
+  .l-card:hover img{filter:none}
+  .l-card figcaption{display:flex;gap:12px;align-items:baseline;margin-top:14px;font:600 1rem/1.3 var(--cond);letter-spacing:.14em;text-transform:uppercase;color:var(--bone2)}
+  .l-card figcaption b{color:var(--blood2);font-weight:700}
+  /* MAPA */
+  .mapa{margin-top:40px;position:relative;border:1px solid var(--line);overflow:hidden;background:var(--ink3)}
+  .mapa iframe{display:block;width:100%;height:clamp(280px,45vw,440px);border:0;filter:grayscale(1) invert(.92) contrast(.88) brightness(.95)}
+  .mapa::after{content:"";position:absolute;inset:0;pointer-events:none;box-shadow:inset 0 0 0 1px var(--line),inset 0 0 80px rgba(10,7,7,.8)}
+  .mapa .ir{position:absolute;right:16px;top:16px;z-index:1}
+
   /* VISOR */
   .vis-f{position:fixed;inset:0;z-index:120;background:var(--ink);display:none;flex-direction:column}
   .vis-f.open{display:flex}
@@ -477,6 +501,16 @@
   </section>
 
   <!-- CONSENTIMIENTO -->
+  <section id="local" class="bloque" hidden>
+    <div class="wrap">
+      <div class="local-cab">
+        <div><p class="lab rev">El estudio</p><h2 class="rev">Por <em>dentro.</em></h2></div>
+        <div class="local-nav rev"><button type="button" id="lPrev" aria-label="Foto anterior">&#8592;</button><span id="lCont"></span><button type="button" id="lNext" aria-label="Foto siguiente">&#8594;</button></div>
+      </div>
+      <div class="local-pista" id="lPista" tabindex="0" aria-label="Fotos del estudio"></div>
+    </div>
+  </section>
+
   <section id="consentimiento">
     <div class="pin" data-pin="cons">
       <div class="st">
@@ -547,6 +581,10 @@
           <div data-tw="horario"></div>
           <p class="nota" data-tw="horarioNota" hidden></p>
         </div>
+      </div>
+      <div class="mapa rev" id="mapaBox" hidden>
+        <iframe id="mapaFrame" title="Mapa con la ubicación del estudio" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        <a class="btn ir" id="comoLlegar" target="_blank" rel="noopener">Cómo llegar</a>
       </div>
     </div>
   </section>
@@ -782,7 +820,7 @@
       var n=document.createElement('span'); n.className='g-n'; n.textContent=dos(i+1);
       b.appendChild(im); b.appendChild(n);
       if(f.zona){var z=document.createElement('span'); z.className='g-z'; z.textContent=f.zona; b.appendChild(z);}
-      b.addEventListener('click',function(){abrir(i)});
+      b.addEventListener('click',function(){vlist=vista; abrir(i)});
       gal.appendChild(b);
     });
     var quedan=vista.length-limite;
@@ -813,13 +851,15 @@
 
   /* Visor */
   var vis=document.getElementById('visor'), img=document.getElementById('visImg'), esc=document.getElementById('visEsc'), cont=document.getElementById('visCont'), cur=0, ultimo=null;
+  var vlist=[]; /* lo que enseña el visor: los trabajos o las fotos del estudio */
   function poner(i){
-    cur=(i+vista.length)%vista.length; var f=vista[cur];
+    cur=(i+vlist.length)%vlist.length; var f=vlist[cur], txt=f.zona||f.pie||'';
     esc.classList.remove('zoom'); img.style.transformOrigin='';
-    img.src=f.url; img.alt=f.zona?'Tatuaje en '+f.zona.toLowerCase():'Trabajo del estudio';
+    img.src=f.url; img.alt=f.pie||(f.zona?'Tatuaje en '+f.zona.toLowerCase():'Foto del estudio');
     cont.innerHTML=''; var b=document.createElement('b'); b.textContent=dos(cur+1); cont.appendChild(b);
-    cont.appendChild(document.createTextNode(' / '+dos(vista.length)+(f.zona?'  ·  '+f.zona:'')));
+    cont.appendChild(document.createTextNode(' / '+dos(vlist.length)+(txt?'  ·  '+txt:'')));
   }
+  window.abrirVisor=function(i,lista){vlist=lista; abrir(i);};
   function abrir(i){ultimo=document.activeElement; poner(i); vis.classList.add('open'); document.body.style.overflow='hidden'; document.getElementById('visX').focus();}
   function cerrar(){vis.classList.remove('open'); document.body.style.overflow=''; esc.classList.remove('zoom'); if(ultimo) ultimo.focus();}
   document.getElementById('visX').onclick=cerrar;
@@ -877,6 +917,57 @@
     var q=(p-.25)/.6; enfocar(r.width*(.25+.5*q), r.height*(.5+.22*Math.sin(q*Math.PI*2)));
   },{passive:true});
 
+  /* El estudio por dentro: carrusel que se arrastra, con flechas y contador; al tocar una foto se abre en grande */
+  var lPista=document.getElementById('lPista'), lCont=document.getElementById('lCont'), LOCAL=[];
+  function pintarLocal(lista){
+    LOCAL=(lista||[]).filter(function(f){return /^https:\/\//.test(f.url||'')});
+    document.getElementById('local').hidden=!LOCAL.length; lPista.textContent='';
+    LOCAL.forEach(function(f,i){
+      var fig=document.createElement('figure'); fig.className='l-card';
+      var caja=document.createElement('div'); caja.className='l-img';
+      var im=document.createElement('img'); im.src=f.url; im.loading='lazy'; im.alt=f.pie||'Foto del estudio'; caja.appendChild(im); fig.appendChild(caja);
+      var cap=document.createElement('figcaption'), n=document.createElement('b'); n.textContent=dos(i+1); cap.appendChild(n);
+      if(f.pie) cap.appendChild(document.createTextNode(f.pie)); fig.appendChild(cap);
+      fig.addEventListener('click',function(){ if(!lPista._movido) window.abrirVisor(i,LOCAL); });
+      lPista.appendChild(fig);
+    });
+    contarLocal();
+  }
+  function contarLocal(){
+    var cards=lPista.children; if(!cards.length) return;
+    var r=lPista.getBoundingClientRect(), centro=r.left+r.width/2, mejor=0, md=1e9;
+    for(var i=0;i<cards.length;i++){
+      var c=cards[i].getBoundingClientRect(), dc=c.left+c.width/2-centro;
+      if(Math.abs(dc)<md){md=Math.abs(dc);mejor=i;}
+      if(!reduce) cards[i].querySelector('img').style.setProperty('--px',(-dc*.06).toFixed(1)+'px'); /* parallax dentro de cada foto */
+    }
+    lCont.innerHTML='<b>'+dos(mejor+1)+'</b> / '+dos(cards.length);
+  }
+  function pasoLocal(d){ var f=lPista.children[0]; if(f) lPista.scrollBy({left:d*(f.offsetWidth+16),behavior:reduce?'auto':'smooth'}); }
+  document.getElementById('lPrev').onclick=function(){pasoLocal(-1)};
+  document.getElementById('lNext').onclick=function(){pasoLocal(1)};
+  lPista.addEventListener('scroll',function(){requestAnimationFrame(contarLocal)},{passive:true});
+  /* arrastrar con el ratón en ordenador (en el móvil ya se desliza con el dedo) */
+  (function(){var x0=null,s0=0;
+    lPista.addEventListener('pointerdown',function(e){ if(e.pointerType!=='mouse') return; x0=e.clientX; s0=lPista.scrollLeft; lPista._movido=false; });
+    addEventListener('pointermove',function(e){ if(x0===null) return; var dx=e.clientX-x0; if(Math.abs(dx)>5){lPista._movido=true; lPista.classList.add('arrastrando');} lPista.scrollLeft=s0-dx; });
+    addEventListener('pointerup',function(){ if(x0===null) return; x0=null; lPista.classList.remove('arrastrando'); setTimeout(function(){lPista._movido=false},50); });
+  })();
+  /* las fotos entran giradas, como fotos sueltas, y se enderezan al hacer scroll */
+  window.addEventListener('scroll',function(){
+    if(reduce||document.getElementById('local').hidden) return;
+    var r=lPista.getBoundingClientRect(), vh=innerHeight;
+    lPista.style.setProperty('--p',Math.min(1,Math.max(0,(vh-r.top)/(vh*.6))).toFixed(3));
+  },{passive:true});
+
+  /* Mapa: sale si el estudio tiene puesta su dirección en el panel */
+  function pintarMapa(dir){
+    dir=String(dir||'').trim(); document.getElementById('mapaBox').hidden=!dir; if(!dir) return;
+    var q=encodeURIComponent(dir);
+    document.getElementById('mapaFrame').src='https://maps.google.com/maps?q='+q+'&z=15&output=embed';
+    document.getElementById('comoLlegar').href='https://www.google.com/maps/dir/?api=1&destination='+q;
+  }
+
   /* Datos: las fotos y su zona vienen del panel del estudio */
   function cargar(fotos){
     FOTOS=(fotos||[]).filter(function(f){return /^https:\/\//.test(f.url||'')}).map(function(f){return {url:f.url,ancho:+f.ancho||0,alto:+f.alto||0,zona:String(f.zona||'').trim()}});
@@ -889,6 +980,7 @@
   if(ID) fetch('https://motor-consentimientos.vercel.app/api/web?id='+encodeURIComponent(ID))
     .then(function(r){return r.ok?r.json():null}).then(function(d){ if(!d) return; cargar(d.fotos);
       var c=d.contenido||{}, fondo=d.fondo||c.fondo;
+      pintarLocal(d.local); pintarMapa(c.direccion);
       /* El estudio elige en su panel el fondo de la portada: «logo» (su PNG) o «tatuador» (la foto del primero del equipo) */
       if(fondo!=='tatuador') ponerLogo(d.logo||c.logo); }).catch(function(){});
 
