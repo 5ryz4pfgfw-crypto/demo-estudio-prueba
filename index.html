@@ -42,7 +42,7 @@
   .demo a{font-weight:700;text-underline-offset:3px}
   .aviso{position:relative;z-index:55;background:var(--blood);color:#fff;text-align:center;font:600 .95rem/1.4 var(--sans);padding:10px 16px}
 
-  header{position:fixed;left:0;right:0;top:0;z-index:50;transition:background .3s,transform .4s;transform:translateY(var(--hdr,0))}
+  header{position:fixed;left:0;right:0;top:var(--top,0px);z-index:50;transition:background .3s,transform .4s;transform:translateY(var(--hdr,0))}
   header.solid{background:rgba(10,7,7,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
   .nav{display:flex;align-items:center;justify-content:space-between;height:70px}
   .logo{font:800 1.7rem/1 var(--goth);text-decoration:none}
@@ -61,14 +61,13 @@
   @media(min-width:900px){.nav .btn{display:inline-flex}}
 
   /* HERO */
-  .hero{position:relative;height:100svh;min-height:620px;overflow:hidden;display:flex;align-items:flex-end;padding-bottom:9vh}
+  .hero{position:relative;min-height:max(560px,calc(100svh - var(--ban,0px)));overflow:hidden;display:flex;align-items:flex-end;padding:100px 0 calc(5vh + 80px)}
+  @media(min-width:900px){.hero{padding-bottom:9vh}}
   .hero .glow{position:absolute;inset:0;background:radial-gradient(60% 50% at 70% 40%,rgba(200,16,46,.35),transparent 70%),radial-gradient(40% 40% at 10% 90%,rgba(200,16,46,.18),transparent 70%);transform:scale(calc(1 + var(--p,0)*.5));opacity:calc(1 - var(--p,0)*.8)}
-  .hero .roseton{position:absolute;right:-18vmin;top:8vh;width:min(95vmin,760px);opacity:.55;transform:rotate(calc(var(--p,0)*90deg)) scale(calc(1 + var(--p,0)*.3))}
+  .hero .roseton{position:absolute;right:-18vmin;top:8vh;width:min(95vmin,760px);opacity:calc(.55 - var(--p,0)*.4);transform:scale(calc(1 + var(--p,0)*.35));animation:gira 60s linear infinite}
   .roseton circle{fill:none;stroke:var(--bone);stroke-width:.6}
   .roseton text{fill:var(--bone2);font:600 21px var(--cond);letter-spacing:.2em}
   .roseton .r{stroke:var(--blood);stroke-width:1}
-  .hero .roseton{animation:gira 60s linear infinite}
-  .hero .roseton{transform:scale(calc(1 + var(--p,0)*.35));opacity:calc(.55 - var(--p,0)*.4)}
   @keyframes gira{to{rotate:360deg}}
   .hero .in{position:relative;z-index:2}
   .estado{display:inline-flex;align-items:center;gap:10px;margin:0 0 22px;padding:8px 14px;border:1px solid var(--line);font:600 .9rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--bone2);background:rgba(10,7,7,.5)}
@@ -76,7 +75,7 @@
   .estado.open{color:#d9f3df}
   .estado.open::before{background:#35d06a;box-shadow:0 0 0 4px rgba(53,208,106,.2);animation:lat 1.6s infinite}
   @keyframes lat{50%{box-shadow:0 0 0 8px rgba(53,208,106,0)}}
-  .titulo{font:800 clamp(5rem,22vw,15rem)/.78 var(--goth);margin:0 0 26px;letter-spacing:-.02em}
+  .titulo{font:800 clamp(4rem,min(19vw,22svh),15rem)/.82 var(--goth);margin:0 0 22px;letter-spacing:-.02em}
   .titulo span{display:block;will-change:transform}
   .titulo .a{transform:translateX(calc(var(--p,0)*-30vw))}
   .titulo .b{color:var(--blood);padding-left:.35em;transform:translateX(calc(var(--p,0)*30vw))}
@@ -84,6 +83,7 @@
   @keyframes sube{to{opacity:1;transform:none}}
   .eslogan{max-width:520px;font-size:clamp(1.05rem,2.4vw,1.3rem);color:var(--bone2);margin:0 0 30px;opacity:calc(1 - var(--p,0)*2)}
   .cta{display:flex;flex-wrap:wrap;gap:12px;opacity:calc(1 - var(--p,0)*2)}
+  @media(max-width:599px){.cta{flex-wrap:nowrap;gap:8px}.cta .btn{flex:1;padding:15px 8px;font-size:.88rem;letter-spacing:.1em;white-space:nowrap}}
   .baja{position:absolute;right:5vw;bottom:9vh;z-index:2;font:600 .8rem/1 var(--cond);letter-spacing:.3em;text-transform:uppercase;writing-mode:vertical-rl;color:var(--mut);display:none}
   .baja::after{content:"";display:block;width:1px;height:70px;margin:14px auto 0;background:linear-gradient(var(--blood),transparent);animation:gota 1.8s infinite}
   @keyframes gota{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
@@ -96,7 +96,7 @@
   .cinta i{font-style:normal;color:var(--blood)}
 
   section{position:relative}
-  .bloque{padding:120px 0}
+  .bloque{padding:clamp(72px,11vw,120px) 0}
 
   /* EL ESTUDIO: se dibuja con el scroll */
   .pin{position:relative}
@@ -144,19 +144,50 @@
   textarea{width:100%;min-height:96px;background:var(--ink);border:1px solid var(--line);color:var(--bone);font:16px/1.5 var(--sans);padding:14px;resize:vertical}
   textarea:focus{outline:1px solid var(--blood)}
   .previa{margin-top:22px;padding:18px;border-left:3px solid var(--blood);background:rgba(200,16,46,.07);color:var(--bone2);font-size:.95rem;white-space:pre-line}
-  .silueta{position:relative;max-width:300px;margin:10px auto 0}
-  .silueta svg{width:100%;display:block}
-  .silueta .zona{fill:rgba(239,230,214,.07);stroke:var(--line);cursor:pointer;transition:fill .2s}
-  .silueta .zona:hover{fill:rgba(200,16,46,.35)}
-  .silueta .zona.on{fill:var(--blood);stroke:var(--blood2)}
 
   /* FOTOS */
-  .fotos .tw-fotos a{border-radius:0!important;transform:translateY(calc((1 - var(--p,0)) * 40px));opacity:calc(.3 + var(--p,0)*1.4);filter:grayscale(calc(1 - var(--p,0)*1.6));transition:filter .4s}
-  .fotos .tw-fotos a:hover{filter:none}
-  .vacio{border:1px dashed var(--line);padding:40px;text-align:center;color:var(--mut)}
+  .gal-cab{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:10px 30px;margin-bottom:26px}
+  .gal-cab h2{margin:0}
+  .gal-pista{margin:0 0 6px;color:var(--mut);font:600 .8rem/1.3 var(--cond);letter-spacing:.24em;text-transform:uppercase}
+  .gal-zonas{display:flex;gap:8px;overflow-x:auto;scrollbar-width:none;margin:0 -5vw 26px;padding:2px 5vw 4px;-webkit-overflow-scrolling:touch}
+  .gal-zonas::-webkit-scrollbar{display:none}
+  .gal-zonas button{flex:none;display:inline-flex;align-items:center;gap:9px;font:600 .95rem/1 var(--sans);color:var(--bone);background:transparent;border:1px solid var(--line);padding:11px 15px;cursor:pointer;transition:background .2s,border-color .2s,color .2s}
+  .gal-zonas button i{font:700 .8rem/1 var(--cond);font-style:normal;color:var(--mut);letter-spacing:.06em}
+  .gal-zonas button:hover{border-color:var(--blood)}
+  .gal-zonas button[aria-pressed="true"]{background:var(--blood);border-color:var(--blood);color:#fff}
+  .gal-zonas button[aria-pressed="true"] i{color:rgba(255,255,255,.8)}
+  .gal{display:grid;grid-template-columns:repeat(2,1fr);gap:8px;transition:opacity .22s,transform .22s}
+  @media(min-width:700px){.gal{grid-template-columns:repeat(3,1fr);gap:12px}}
+  @media(min-width:1100px){.gal{grid-template-columns:repeat(4,1fr)}}
+  .gal.fuera{opacity:0;transform:translateY(14px)}
+  .g-t{position:relative;display:block;width:100%;aspect-ratio:4/5;padding:0;border:0;background:var(--ink3);overflow:hidden;cursor:zoom-in;color:#fff;font:inherit;text-align:left;
+    clip-path:inset(calc((1 - var(--p,1)) * 100%) 0 0 0)}
+  .g-t img{width:100%;height:100%;object-fit:cover;display:block;transform:scale(calc(1.22 - var(--p,1) * .22));filter:grayscale(.85) contrast(1.05);transition:filter .45s}
+  .g-t:hover img,.g-t:focus-visible img{filter:none}
+  .g-t::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(10,7,7,.85));pointer-events:none}
+  .g-t .g-n{position:absolute;top:10px;left:12px;z-index:1;font:700 .8rem/1 var(--cond);letter-spacing:.18em;opacity:.8}
+  .g-t .g-z{position:absolute;left:12px;right:12px;bottom:11px;z-index:1;font:600 .95rem/1.1 var(--cond);letter-spacing:.14em;text-transform:uppercase}
+  .g-t .g-z::before{content:"";display:inline-block;width:14px;height:2px;background:var(--blood2);vertical-align:middle;margin-right:8px}
+  .g-t:focus-visible{outline:2px solid var(--blood2);outline-offset:3px}
+  .gal-mas{display:flex;margin:34px auto 0}
+  .gal-mas[hidden]{display:none}
+
+  /* VISOR */
+  .vis-f{position:fixed;inset:0;z-index:120;background:var(--ink);display:none;flex-direction:column}
+  .vis-f.open{display:flex}
+  .vis-bar{display:flex;align-items:center;justify-content:space-between;gap:14px;padding:calc(env(safe-area-inset-top,0px) + 14px) 18px 10px}
+  .vis-bar p{margin:0;font:600 1rem/1.2 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--bone2)}
+  .vis-bar p b{color:var(--blood2);font-weight:700}
+  .vis-escena{flex:1;min-height:0;position:relative;overflow:hidden;display:flex;align-items:center;justify-content:center;padding:0 12px}
+  .vis-escena img{max-width:100%;max-height:100%;object-fit:contain;cursor:zoom-in;transition:transform .35s cubic-bezier(.2,.8,.2,1),opacity .2s;touch-action:pan-y;user-select:none;-webkit-user-drag:none}
+  .vis-escena.zoom img{transform:scale(2.3);cursor:zoom-out;touch-action:none;transition:opacity .2s}
+  .vis-btn{width:50px;height:50px;border-radius:50%;border:1px solid var(--line);background:rgba(10,7,7,.6);color:var(--bone);cursor:pointer;display:inline-flex;align-items:center;justify-content:center;font-size:1.4rem;line-height:1}
+  .vis-btn:hover{border-color:var(--blood);color:#fff}
+  .vis-pie{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:12px 18px calc(env(safe-area-inset-bottom,0px) + 16px)}
+  .vis-pie span{font:500 .85rem/1.3 var(--sans);color:var(--mut);text-align:center}
 
   /* EQUIPO: ficha de artista */
-  .eq .tw-eq{display:grid!important;grid-template-columns:1fr!important;gap:110px!important}
+  .eq .tw-eq{display:grid!important;grid-template-columns:1fr!important;gap:clamp(70px,10vw,110px)!important}
   .eq .tw-eq article{text-align:left!important;display:grid;gap:0 50px;grid-template-columns:1fr;align-items:end;position:relative}
   @media(min-width:900px){
     .eq .tw-eq article{grid-template-columns:1.05fr .95fr}
@@ -166,6 +197,7 @@
     .eq .tw-eq article:nth-child(even) > *:not(.tw-f){grid-column:1;grid-row:auto}
     .eq .tw-eq article:nth-child(even) .tw-f{grid-column:2}
   }
+  @media(min-width:600px) and (max-width:899px){.eq .tw-eq .tw-f{max-width:460px}}
   .eq .tw-eq .tw-f{border-radius:0!important;margin:0 0 26px!important;aspect-ratio:4/5!important;position:relative;
     clip-path:inset(calc((1 - var(--v,0))*100%) 0 0 0);filter:grayscale(calc(1 - var(--c,0))) contrast(1.08)}
   .eq .tw-eq .tw-f::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(10,7,7,.85))}
@@ -183,8 +215,15 @@
   .hero .foto{position:absolute;right:0;top:0;bottom:0;width:min(62vw,720px);background:center 20%/cover no-repeat;filter:grayscale(1) contrast(1.1);opacity:0;transition:opacity 1.2s;
     -webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);mask-image:linear-gradient(90deg,transparent,#000 40%);transform:translateY(calc(var(--p,0)*12vh)) scale(calc(1.04 + var(--p,0)*.08))}
   .hero .foto.on{opacity:.75}
+  /* logo del estudio de fondo (si lo sube en su panel): sustituye a la foto del tatuador */
+  .hero .marca{position:absolute;z-index:1;right:max(4vw,calc(50vw - 640px));top:50%;width:min(52vw,600px);aspect-ratio:1;translate:0 -50%;background:center/contain no-repeat;opacity:0;transition:opacity 1.2s;
+    filter:drop-shadow(0 0 60px rgba(200,16,46,.35));transform:scale(calc(1 + var(--p,0)*.25)) rotate(calc(var(--p,0)*-8deg))}
+  .hero .marca.on{opacity:calc(.9 - var(--p,0)*1.2)}
+  .hero.con-logo .foto{display:none}
+  @media(max-width:899px){.hero .marca{right:50%;top:74px;width:min(42vw,180px);translate:50% 0}.hero .marca.on{opacity:calc(.7 - var(--p,0)*1.2)}}
+  @media(min-width:600px) and (max-width:899px){.hero .marca{width:min(40vw,300px)}}
   @media(max-width:899px){.hero .foto{width:100%;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 45%,transparent 85%);mask-image:linear-gradient(transparent,#000 15%,#000 45%,transparent 85%)}}
-  .hero .firma{position:relative;z-index:2;margin:-6px 0 26px;font:600 .9rem/1.3 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--bone2)}
+  .hero .firma{position:relative;z-index:2;margin:0 0 20px;font:600 .9rem/1.3 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--bone2)}
   .hero .firma b{display:block;font:800 1.6rem/1 var(--goth);letter-spacing:0;text-transform:none;color:var(--bone);margin-bottom:4px}
 
   /* CONSENTIMIENTO */
@@ -216,7 +255,6 @@
     .movil .t{font-size:1.05rem}
     .movil .c{height:22px;font-size:.6rem}
     .movil .ok{height:30px;font-size:.62rem}
-    .silueta{display:none}
   }
   /* FAQ / CONTACTO */
   .faq .tw-p details{border-bottom:1px solid var(--line)!important;padding:20px 0!important}
@@ -236,7 +274,7 @@
   .horario .tw-hoy{color:var(--blood2)!important}
   .nota{color:var(--mut);margin:16px 0 0}
 
-  .gran{padding:110px 0 70px;text-align:center;border-top:1px solid var(--line);overflow:hidden}
+  .gran{padding:clamp(60px,10vw,110px) 0 clamp(40px,7vw,70px);text-align:center;border-top:1px solid var(--line);overflow:hidden}
   .gran p{font:800 clamp(4rem,17vw,13rem)/.85 var(--goth);margin:0;transform:scale(calc(.7 + var(--p,0)*.4));opacity:calc(var(--p,0)*1.6)}
   .gran p em{font-style:normal;color:var(--blood)}
   footer{border-top:1px solid var(--line);padding:34px 0;color:var(--mut);font-size:.85rem}
@@ -281,6 +319,7 @@
   <section class="hero" id="inicio" data-sc="salida">
     <div class="glow"></div>
     <div class="foto" id="heroFoto" aria-hidden="true"></div>
+    <div class="marca" id="heroLogo" aria-hidden="true"></div>
     <svg class="roseton" viewBox="0 0 400 400" aria-hidden="true">
       <defs><path id="circ" d="M200 200 m-160 0 a160 160 0 1 1 320 0 a160 160 0 1 1 -320 0"/></defs>
       <circle cx="200" cy="200" r="196"/><circle class="r" cx="200" cy="200" r="182"/><circle cx="200" cy="200" r="132"/>
@@ -381,9 +420,13 @@
   <!-- TRABAJOS -->
   <section id="trabajos" class="bloque fotos" data-tw-bloque="fotos" hidden>
     <div class="wrap">
-      <p class="lab rev">Trabajos</p>
-      <h2 class="rev">Recién <em>salidos.</em></h2>
-      <div data-tw="fotos" id="fotos"></div>
+      <div class="gal-cab">
+        <div><p class="lab rev">Trabajos</p><h2 class="rev">Recién <em>salidos.</em></h2></div>
+        <p class="gal-pista rev">Toca una foto para verla en grande</p>
+      </div>
+      <div class="gal-zonas" id="galZonas" role="group" aria-label="Filtrar trabajos por zona del cuerpo" hidden></div>
+      <div class="gal" id="gal"></div>
+      <button class="btn btn-o gal-mas" id="galMas" type="button" hidden>Ver más trabajos</button>
     </div>
   </section>
 
@@ -562,6 +605,9 @@
   function frame(){
     var y=scrollY, H=root.scrollHeight-vh;
     root.style.setProperty('--prog',H>0?y/H:0);
+    var demo=document.querySelector('.demo'), av=document.querySelector('.aviso');
+    if(y<=0) root.style.setProperty('--ban',(av&&!av.hidden?av:demo).getBoundingClientRect().bottom+'px');
+    root.style.setProperty('--top',Math.max(0,(av&&!av.hidden?av:demo).getBoundingClientRect().bottom)+'px');
     hdr.classList.toggle('solid',y>40);
     hdr.style.setProperty('--hdr',(y>lastY&&y>400)?'-100%':'0');
     lastY=y;
@@ -599,9 +645,9 @@
       f.style.setProperty('--v',seg(q,0,.7).toFixed(3)); f.style.setProperty('--c',seg(q,.6,1).toFixed(3));
     });
 
-    /* fotos con parallax */
-    document.querySelectorAll('#fotos a').forEach(function(a){
-      var r=a.getBoundingClientRect(); a.style.setProperty('--p',clamp((vh-r.top)/(vh*.6)).toFixed(3));
+    /* trabajos: cada foto se destapa de abajo arriba al entrar */
+    if(!reduce) document.querySelectorAll('#gal .g-t').forEach(function(a){
+      var r=a.getBoundingClientRect(); a.style.setProperty('--p',clamp((vh-r.top)/(vh*.45)).toFixed(3));
     });
   }
   var ticking=false;
@@ -611,7 +657,7 @@
 
   /* Cuando el panel rellena cosas, volver a medir */
   var mo=new MutationObserver(function(){requestAnimationFrame(function(){medirServicios();revelar();frame();});});
-  document.querySelectorAll('[data-tw="servicios"],[data-tw="fotos"],[data-tw="equipo"]').forEach(function(el){mo.observe(el,{childList:true});});
+  document.querySelectorAll('[data-tw="servicios"],#gal,[data-tw="equipo"]').forEach(function(el){mo.observe(el,{childList:true});});
   if(reduce){document.querySelectorAll('.pin').forEach(function(p){p.style.height='auto'});document.querySelectorAll('.pin .st').forEach(function(s){s.style.position='static';s.style.height='auto';s.style.padding='100px 0'});
     flash.style.cssText='--d:1;--d2:1;--d3:1';movil.style.setProperty('--s',1);pasos.forEach(function(l){l.classList.add('on')});pista.style.overflowX='auto';}
   /* Equipo: numerar artistas y poner al primero en la portada */
@@ -667,6 +713,125 @@
     e.preventDefault();
     window.open(base+'?text='+encodeURIComponent(mensaje()),'_blank','noopener');
   });
+})();
+</script>
+<div class="vis-f" id="visor" role="dialog" aria-modal="true" aria-label="Trabajo en grande">
+  <div class="vis-bar"><p id="visCont"></p><button class="vis-btn" type="button" id="visX" aria-label="Cerrar">&times;</button></div>
+  <div class="vis-escena" id="visEsc"><img id="visImg" alt=""></div>
+  <div class="vis-pie"><button class="vis-btn" type="button" id="visP" aria-label="Anterior">&#8592;</button><span>Toca la foto para acercarte</span><button class="vis-btn" type="button" id="visN" aria-label="Siguiente">&#8594;</button></div>
+</div>
+
+<script>
+/* Trabajos: rejilla limpia, filtro por zona (solo si el estudio las pone) y visor con zoom */
+(function(){
+  var ID=document.body.getAttribute('data-tachan');
+  var ORDEN=['Antebrazo','Brazo','Hombro','Pecho','Abdomen / costillas','Espalda','Muslo','Gemelo / tobillo','Mano','Cuello'];
+  var gal=document.getElementById('gal'), zbox=document.getElementById('galZonas'), mas=document.getElementById('galMas');
+  var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var FOTOS=[], filtro='', PASO=8, limite=PASO, vista=[];
+  var dos=function(n){return ('0'+n).slice(-2)};
+
+  function lista(){return filtro?FOTOS.filter(function(f){return f.zona===filtro}):FOTOS;}
+
+  function pintar(){
+    vista=lista();
+    gal.textContent='';
+    vista.slice(0,limite).forEach(function(f,i){
+      var b=document.createElement('button'); b.type='button'; b.className='g-t'; b.dataset.i=i;
+      var im=document.createElement('img'); im.src=f.url; im.loading='lazy'; im.alt=f.zona?'Tatuaje en '+f.zona.toLowerCase():'Trabajo del estudio';
+      if(f.ancho){im.width=f.ancho; im.height=f.alto;}
+      var n=document.createElement('span'); n.className='g-n'; n.textContent=dos(i+1);
+      b.appendChild(im); b.appendChild(n);
+      if(f.zona){var z=document.createElement('span'); z.className='g-z'; z.textContent=f.zona; b.appendChild(z);}
+      b.addEventListener('click',function(){abrir(i)});
+      gal.appendChild(b);
+    });
+    var quedan=vista.length-limite;
+    mas.hidden=quedan<=0; if(quedan>0) mas.textContent='Ver '+Math.min(quedan,PASO)+' más · quedan '+quedan;
+    window.dispatchEvent(new Event('scroll'));
+  }
+
+  function zonas(){
+    var cuenta={}; FOTOS.forEach(function(f){ if(f.zona) cuenta[f.zona]=(cuenta[f.zona]||0)+1; });
+    var hay=Object.keys(cuenta).sort(function(a,b){var x=ORDEN.indexOf(a),y=ORDEN.indexOf(b);return (x<0?99:x)-(y<0?99:y)});
+    zbox.hidden=!hay.length; zbox.textContent='';
+    if(!hay.length) return;
+    [['',FOTOS.length,'Todas']].concat(hay.map(function(z){return [z,cuenta[z],z]})).forEach(function(o){
+      var b=document.createElement('button'); b.type='button'; b.setAttribute('aria-pressed',o[0]===filtro);
+      b.appendChild(document.createTextNode(o[2]+' ')); var i=document.createElement('i'); i.textContent=o[1]; b.appendChild(i);
+      b.addEventListener('click',function(){
+        if(o[0]===filtro) return; filtro=o[0]; limite=PASO;
+        zbox.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed',x===b)});
+        b.scrollIntoView({block:'nearest',inline:'center',behavior:reduce?'auto':'smooth'});
+        if(reduce){pintar();return;}
+        gal.classList.add('fuera'); setTimeout(function(){pintar(); requestAnimationFrame(function(){gal.classList.remove('fuera')});},220);
+      });
+      zbox.appendChild(b);
+    });
+  }
+
+  mas.addEventListener('click',function(){limite+=PASO; pintar();});
+
+  /* Visor */
+  var vis=document.getElementById('visor'), img=document.getElementById('visImg'), esc=document.getElementById('visEsc'), cont=document.getElementById('visCont'), cur=0, ultimo=null;
+  function poner(i){
+    cur=(i+vista.length)%vista.length; var f=vista[cur];
+    esc.classList.remove('zoom'); img.style.transformOrigin='';
+    img.src=f.url; img.alt=f.zona?'Tatuaje en '+f.zona.toLowerCase():'Trabajo del estudio';
+    cont.innerHTML=''; var b=document.createElement('b'); b.textContent=dos(cur+1); cont.appendChild(b);
+    cont.appendChild(document.createTextNode(' / '+dos(vista.length)+(f.zona?'  ·  '+f.zona:'')));
+  }
+  function abrir(i){ultimo=document.activeElement; poner(i); vis.classList.add('open'); document.body.style.overflow='hidden'; document.getElementById('visX').focus();}
+  function cerrar(){vis.classList.remove('open'); document.body.style.overflow=''; esc.classList.remove('zoom'); if(ultimo) ultimo.focus();}
+  document.getElementById('visX').onclick=cerrar;
+  document.getElementById('visP').onclick=function(){poner(cur-1)};
+  document.getElementById('visN').onclick=function(){poner(cur+1)};
+  esc.addEventListener('click',function(e){ if(e.target===esc && !esc.classList.contains('zoom')) cerrar(); });
+  document.addEventListener('keydown',function(e){
+    if(!vis.classList.contains('open')) return;
+    if(e.key==='Escape') cerrar(); else if(e.key==='ArrowRight') poner(cur+1); else if(e.key==='ArrowLeft') poner(cur-1);
+  });
+  /* Zoom: toca para acercarte y mueve el dedo (o el ratón) para recorrer la foto */
+  function origen(e){var r=img.getBoundingClientRect(); img.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';}
+  var sx=null, sy=null, movido=false;
+  img.addEventListener('pointerdown',function(e){sx=e.clientX; sy=e.clientY; movido=false;});
+  img.addEventListener('pointermove',function(e){
+    if(sx!==null && Math.abs(e.clientX-sx)+Math.abs(e.clientY-sy)>8) movido=true;
+    if(!esc.classList.contains('zoom')) return;
+    if(e.pointerType==='mouse' || sx!==null){
+      var r=esc.getBoundingClientRect();
+      img.style.transformOrigin=((e.clientX-r.left)/r.width*100)+'% '+((e.clientY-r.top)/r.height*100)+'%';
+    }
+  });
+  img.addEventListener('pointerup',function(e){
+    var dx=sx===null?0:e.clientX-sx; sx=null;
+    if(esc.classList.contains('zoom')){ if(!movido) esc.classList.remove('zoom'); return; }
+    if(Math.abs(dx)>50){poner(cur+(dx<0?1:-1)); return;}
+    if(!movido){origen(e); esc.classList.add('zoom');}
+  });
+  img.addEventListener('pointercancel',function(){sx=null;});
+
+  /* Datos: las fotos y su zona vienen del panel del estudio */
+  function cargar(fotos){
+    FOTOS=(fotos||[]).filter(function(f){return /^https:\/\//.test(f.url||'')}).map(function(f){return {url:f.url,ancho:+f.ancho||0,alto:+f.alto||0,zona:String(f.zona||'').trim()}});
+    if(filtro && !FOTOS.some(function(f){return f.zona===filtro})) filtro='';
+    zonas(); pintar();
+  }
+  if(ID) fetch('https://motor-consentimientos.vercel.app/api/web?id='+encodeURIComponent(ID))
+    .then(function(r){return r.ok?r.json():null}).then(function(d){ if(!d) return; cargar(d.fotos);
+      var c=d.contenido||{}, fondo=d.fondo||c.fondo;
+      /* El estudio elige en su panel el fondo de la portada: «logo» (su PNG) o «tatuador» (la foto del primero del equipo) */
+      if(fondo!=='tatuador') ponerLogo(d.logo||c.logo); }).catch(function(){});
+
+  /* Logo de fondo en la portada: si lo ha elegido y lo ha subido; si no, se queda la foto del tatuador */
+  function ponerLogo(l){
+    var url=typeof l==='string'?l:(l&&l.url);
+    if(!/^https:\/\//.test(url||'')) return;
+    var im=new Image(); im.onload=function(){
+      var el=document.getElementById('heroLogo'); el.style.backgroundImage='url("'+url.replace(/"/g,'')+'")';
+      el.classList.add('on'); el.closest('.hero').classList.add('con-logo');
+    }; im.src=url;
+  }
 })();
 </script>
 </body>
