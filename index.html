@@ -827,10 +827,28 @@
   function ponerLogo(l){
     var url=typeof l==='string'?l:(l&&l.url);
     if(!/^https:\/\//.test(url||'')) return;
-    var im=new Image(); im.onload=function(){
-      var el=document.getElementById('heroLogo'); el.style.backgroundImage='url("'+url.replace(/"/g,'')+'")';
+    var im=new Image(); im.crossOrigin='anonymous'; im.onload=function(){
+      var el=document.getElementById('heroLogo'), claro=aclarar(im);
+      el.style.backgroundImage='url("'+(claro||url.replace(/"/g,''))+'")';
       el.classList.add('on'); el.closest('.hero').classList.add('con-logo');
     }; im.src=url;
+  }
+  /* Si el logo es casi todo negro, no se vería sobre el fondo negro de la web:
+     sus partes oscuras se pasan a color hueso y los colores (el rojo, etc.) se quedan como están. */
+  function aclarar(im){
+    try{
+      var k=Math.min(1,900/Math.max(im.naturalWidth,im.naturalHeight)), c=document.createElement('canvas');
+      c.width=Math.max(1,Math.round(im.naturalWidth*k)); c.height=Math.max(1,Math.round(im.naturalHeight*k));
+      var x=c.getContext('2d'); x.drawImage(im,0,0,c.width,c.height);
+      var px=x.getImageData(0,0,c.width,c.height), d=px.data, suma=0, n=0, i, l, sat;
+      for(i=0;i<d.length;i+=4){ if(d[i+3]<128) continue; suma+=(.2126*d[i]+.7152*d[i+1]+.0722*d[i+2])/255; n++; }
+      if(!n || suma/n>=.35) return null;
+      for(i=0;i<d.length;i+=4){
+        l=(.2126*d[i]+.7152*d[i+1]+.0722*d[i+2])/255; sat=Math.max(d[i],d[i+1],d[i+2])-Math.min(d[i],d[i+1],d[i+2]);
+        if(l<.45 && sat<60){ d[i]=239; d[i+1]=230; d[i+2]=214; }
+      }
+      x.putImageData(px,0,0); return c.toDataURL('image/png');
+    }catch(e){ return null; }
   }
 })();
 </script>
