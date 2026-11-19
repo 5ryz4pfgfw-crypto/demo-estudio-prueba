@@ -1,0 +1,673 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Estudio Prueba · Tatuajes · Demo TachánWeb</title>
+<meta name="description" content="Web de demostración de TachánWeb para estudios de tatuaje. Todo el contenido se cambia desde el panel del estudio.">
+<meta name="robots" content="noindex">
+<meta name="theme-color" content="#0a0707">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Grenze+Gotisch:wght@400;600;800&family=Barlow+Condensed:wght@500;600;700&family=Inter:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --ink:#0a0707; --ink2:#130e0d; --ink3:#1c1513;
+    --bone:#efe6d6; --bone2:#c9bda8; --mut:#8f857a;
+    --blood:#c8102e; --blood2:#ff3b4f; --line:rgba(239,230,214,.12);
+    --goth:"Grenze Gotisch","UnifrakturMaguntia",serif;
+    --cond:"Barlow Condensed","Arial Narrow",sans-serif;
+    --sans:Inter,system-ui,sans-serif;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;background:var(--ink);color:var(--bone);font:16px/1.6 var(--sans);-webkit-font-smoothing:antialiased;overflow-x:hidden;padding-bottom:78px}
+  @media(min-width:900px){body{padding-bottom:0}}
+  a{color:inherit}
+  .wrap{width:min(1180px,90vw);margin:0 auto}
+  .lab{font:600 .8rem/1 var(--cond);letter-spacing:.32em;text-transform:uppercase;color:var(--blood2);margin:0 0 18px;display:flex;align-items:center;gap:12px}
+  .lab::before{content:"";width:34px;height:1px;background:currentColor}
+  h2{font:800 clamp(2.8rem,8vw,6rem)/.92 var(--goth);margin:0 0 24px;letter-spacing:-.01em}
+  h2 em{font-style:normal;color:var(--blood)}
+  .lead{color:var(--bone2);max-width:600px;margin:0 0 40px}
+
+  /* grano de fondo */
+  body::after{content:"";position:fixed;inset:0;pointer-events:none;z-index:100;opacity:.07;
+    background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E")}
+
+  /* barra de tinta (progreso) */
+  .tinta{position:fixed;top:0;left:0;height:3px;width:100%;background:var(--blood);transform-origin:0 50%;transform:scaleX(var(--prog,0));z-index:60;box-shadow:0 0 12px var(--blood)}
+
+  .demo{position:relative;z-index:55;background:var(--bone);color:var(--ink);font:600 .85rem/1.35 var(--sans);text-align:center;padding:9px 14px}
+  .demo a{font-weight:700;text-underline-offset:3px}
+  .aviso{position:relative;z-index:55;background:var(--blood);color:#fff;text-align:center;font:600 .95rem/1.4 var(--sans);padding:10px 16px}
+
+  header{position:fixed;left:0;right:0;top:0;z-index:50;transition:background .3s,transform .4s;transform:translateY(var(--hdr,0))}
+  header.solid{background:rgba(10,7,7,.82);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border-bottom:1px solid var(--line)}
+  .nav{display:flex;align-items:center;justify-content:space-between;height:70px}
+  .logo{font:800 1.7rem/1 var(--goth);text-decoration:none}
+  .logo b{color:var(--blood);font-weight:800}
+  .links{display:none;gap:30px;font:600 .95rem/1 var(--cond);letter-spacing:.16em;text-transform:uppercase}
+  .links a{text-decoration:none;opacity:.75}
+  .links a:hover{opacity:1;color:var(--blood2)}
+  @media(min-width:900px){.links{display:flex}}
+  .btn{display:inline-flex;align-items:center;justify-content:center;gap:10px;padding:15px 26px;border-radius:2px;font:700 1rem/1 var(--cond);letter-spacing:.14em;text-transform:uppercase;text-decoration:none;border:0;cursor:pointer;transition:transform .15s,background .2s,color .2s}
+  .btn:active{transform:scale(.97)}
+  .btn-r{background:var(--blood);color:#fff}
+  .btn-r:hover{background:var(--blood2)}
+  .btn-o{border:1px solid var(--bone);color:var(--bone);background:transparent}
+  .btn-o:hover{background:var(--bone);color:var(--ink)}
+  .nav .btn{display:none;padding:12px 18px;font-size:.9rem}
+  @media(min-width:900px){.nav .btn{display:inline-flex}}
+
+  /* HERO */
+  .hero{position:relative;height:100svh;min-height:620px;overflow:hidden;display:flex;align-items:flex-end;padding-bottom:9vh}
+  .hero .glow{position:absolute;inset:0;background:radial-gradient(60% 50% at 70% 40%,rgba(200,16,46,.35),transparent 70%),radial-gradient(40% 40% at 10% 90%,rgba(200,16,46,.18),transparent 70%);transform:scale(calc(1 + var(--p,0)*.5));opacity:calc(1 - var(--p,0)*.8)}
+  .hero .roseton{position:absolute;right:-18vmin;top:8vh;width:min(95vmin,760px);opacity:.55;transform:rotate(calc(var(--p,0)*90deg)) scale(calc(1 + var(--p,0)*.3))}
+  .roseton circle{fill:none;stroke:var(--bone);stroke-width:.6}
+  .roseton text{fill:var(--bone2);font:600 21px var(--cond);letter-spacing:.2em}
+  .roseton .r{stroke:var(--blood);stroke-width:1}
+  .hero .roseton{animation:gira 60s linear infinite}
+  .hero .roseton{transform:scale(calc(1 + var(--p,0)*.35));opacity:calc(.55 - var(--p,0)*.4)}
+  @keyframes gira{to{rotate:360deg}}
+  .hero .in{position:relative;z-index:2}
+  .estado{display:inline-flex;align-items:center;gap:10px;margin:0 0 22px;padding:8px 14px;border:1px solid var(--line);font:600 .9rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--bone2);background:rgba(10,7,7,.5)}
+  .estado::before{content:"";width:8px;height:8px;border-radius:50%;background:#6b625a}
+  .estado.open{color:#d9f3df}
+  .estado.open::before{background:#35d06a;box-shadow:0 0 0 4px rgba(53,208,106,.2);animation:lat 1.6s infinite}
+  @keyframes lat{50%{box-shadow:0 0 0 8px rgba(53,208,106,0)}}
+  .titulo{font:800 clamp(5rem,22vw,15rem)/.78 var(--goth);margin:0 0 26px;letter-spacing:-.02em}
+  .titulo span{display:block;will-change:transform}
+  .titulo .a{transform:translateX(calc(var(--p,0)*-30vw))}
+  .titulo .b{color:var(--blood);padding-left:.35em;transform:translateX(calc(var(--p,0)*30vw))}
+  .titulo .l{display:inline-block;opacity:0;transform:translateY(.4em) rotate(-6deg);animation:sube .9s cubic-bezier(.2,.8,.2,1) forwards}
+  @keyframes sube{to{opacity:1;transform:none}}
+  .eslogan{max-width:520px;font-size:clamp(1.05rem,2.4vw,1.3rem);color:var(--bone2);margin:0 0 30px;opacity:calc(1 - var(--p,0)*2)}
+  .cta{display:flex;flex-wrap:wrap;gap:12px;opacity:calc(1 - var(--p,0)*2)}
+  .baja{position:absolute;right:5vw;bottom:9vh;z-index:2;font:600 .8rem/1 var(--cond);letter-spacing:.3em;text-transform:uppercase;writing-mode:vertical-rl;color:var(--mut);display:none}
+  .baja::after{content:"";display:block;width:1px;height:70px;margin:14px auto 0;background:linear-gradient(var(--blood),transparent);animation:gota 1.8s infinite}
+  @keyframes gota{0%{transform:scaleY(0);transform-origin:top}50%{transform:scaleY(1);transform-origin:top}51%{transform-origin:bottom}100%{transform:scaleY(0);transform-origin:bottom}}
+  @media(min-width:900px){.baja{display:block}}
+
+  /* cinta de estilos */
+  .cinta{border-block:1px solid var(--line);overflow:hidden;padding:22px 0;background:var(--ink2)}
+  .cinta div{display:flex;gap:48px;white-space:nowrap;font:600 clamp(2.2rem,6vw,4rem)/1 var(--goth);transform:translateX(calc(var(--p,0)*-60%))}
+  .cinta div:nth-child(2){margin-top:10px;transform:translateX(calc(-40% + var(--p,0)*40%));color:transparent;-webkit-text-stroke:1px var(--bone2)}
+  .cinta i{font-style:normal;color:var(--blood)}
+
+  section{position:relative}
+  .bloque{padding:120px 0}
+
+  /* EL ESTUDIO: se dibuja con el scroll */
+  .pin{position:relative}
+  .pin .st{position:sticky;top:0;height:100svh;display:flex;align-items:center;overflow:hidden}
+  #estudio .pin{height:240vh}
+  .estudio{display:grid;gap:30px;align-items:center}
+  @media(min-width:900px){.estudio{grid-template-columns:1fr 1fr;gap:60px}}
+  .presentacion p{margin:0 0 14px;color:var(--bone2);font-size:1.02rem}
+  @media(max-width:899px){.presentacion p:nth-child(n+2){display:none}}
+  .flash{width:min(78vw,440px);justify-self:center;aspect-ratio:1;position:relative}
+  .flash svg{width:100%;height:100%;overflow:visible}
+  .flash .tr{fill:none;stroke:var(--bone);stroke-width:2.2;stroke-linecap:round;stroke-linejoin:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--d,0))}
+  .flash .rj{fill:none;stroke:var(--blood);stroke-width:2.6;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--d2,0))}
+  .flash .rell{fill:var(--blood);opacity:calc(var(--d3,0)*.9)}
+  .flash .pct{position:absolute;left:0;bottom:-8px;font:600 .85rem/1 var(--cond);letter-spacing:.25em;color:var(--mut);text-transform:uppercase}
+  .flash .pct b{color:var(--blood2)}
+
+  /* SERVICIOS: scroll horizontal */
+  #servicios .pin{height:var(--alto,300vh)}
+  #servicios .st{flex-direction:column;justify-content:center;align-items:stretch}
+  .pista{will-change:transform;transform:translateX(var(--x,0));padding-left:5vw}
+  .pista .tw-s{display:flex!important;gap:22px;width:max-content;grid-template-columns:none!important}
+  .pista .tw-s article{width:min(76vw,360px);min-height:300px;border:1px solid var(--line)!important;border-radius:0!important;padding:30px!important;background:var(--ink2);display:flex;flex-direction:column;position:relative;counter-increment:sv}
+  .pista .tw-s article::before{content:counter(sv,decimal-leading-zero);font:800 4.2rem/1 var(--goth);color:var(--blood);opacity:.9;margin-bottom:auto}
+  .pista .tw-s h3{font:800 2rem/1 var(--goth)!important;margin:26px 0 10px!important}
+  .pista .tw-s p{color:var(--bone2)}
+  .pista .tw-s strong{font:700 1.15rem/1 var(--cond);letter-spacing:.12em;text-transform:uppercase;color:var(--blood2)!important}
+  .pista{counter-reset:sv}
+  .barrita{margin:34px 5vw 0;height:1px;background:var(--line);position:relative}
+  .barrita i{position:absolute;inset:0;background:var(--blood);transform-origin:0;transform:scaleX(var(--hp,0))}
+
+  /* IDEA */
+  .idea{display:grid;gap:40px}
+  @media(min-width:900px){.idea{grid-template-columns:.9fr 1.1fr;align-items:start}}
+  .panel{background:var(--ink2);border:1px solid var(--line);padding:clamp(22px,4vw,38px)}
+  .q{margin:0 0 26px}
+  .q > span{display:block;font:700 .85rem/1 var(--cond);letter-spacing:.22em;text-transform:uppercase;color:var(--bone2);margin-bottom:12px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chips button{font:600 .95rem/1 var(--sans);color:var(--bone);background:transparent;border:1px solid var(--line);padding:11px 15px;cursor:pointer;transition:.15s}
+  .chips button[aria-pressed="true"]{background:var(--blood);border-color:var(--blood);color:#fff}
+  .tam{display:flex;align-items:center;gap:16px}
+  .tam input{flex:1;accent-color:var(--blood)}
+  .tam output{font:800 2.2rem/1 var(--goth);min-width:3.2em;text-align:right;color:var(--blood2)}
+  .regla{height:10px;margin-top:8px;background:repeating-linear-gradient(90deg,var(--mut) 0 1px,transparent 1px 10%);opacity:.5}
+  textarea{width:100%;min-height:96px;background:var(--ink);border:1px solid var(--line);color:var(--bone);font:16px/1.5 var(--sans);padding:14px;resize:vertical}
+  textarea:focus{outline:1px solid var(--blood)}
+  .previa{margin-top:22px;padding:18px;border-left:3px solid var(--blood);background:rgba(200,16,46,.07);color:var(--bone2);font-size:.95rem;white-space:pre-line}
+  .silueta{position:relative;max-width:300px;margin:10px auto 0}
+  .silueta svg{width:100%;display:block}
+  .silueta .zona{fill:rgba(239,230,214,.07);stroke:var(--line);cursor:pointer;transition:fill .2s}
+  .silueta .zona:hover{fill:rgba(200,16,46,.35)}
+  .silueta .zona.on{fill:var(--blood);stroke:var(--blood2)}
+
+  /* FOTOS */
+  .fotos .tw-fotos a{border-radius:0!important;transform:translateY(calc((1 - var(--p,0)) * 40px));opacity:calc(.3 + var(--p,0)*1.4);filter:grayscale(calc(1 - var(--p,0)*1.6));transition:filter .4s}
+  .fotos .tw-fotos a:hover{filter:none}
+  .vacio{border:1px dashed var(--line);padding:40px;text-align:center;color:var(--mut)}
+
+  /* EQUIPO: ficha de artista */
+  .eq .tw-eq{display:grid!important;grid-template-columns:1fr!important;gap:110px!important}
+  .eq .tw-eq article{text-align:left!important;display:grid;gap:0 50px;grid-template-columns:1fr;align-items:end;position:relative}
+  @media(min-width:900px){
+    .eq .tw-eq article{grid-template-columns:1.05fr .95fr}
+    .eq .tw-eq article > *:not(.tw-f){grid-column:2}
+    .eq .tw-eq article .tw-f{grid-row:1 / span 5}
+    .eq .tw-eq article:nth-child(even){grid-template-columns:.95fr 1.05fr}
+    .eq .tw-eq article:nth-child(even) > *:not(.tw-f){grid-column:1;grid-row:auto}
+    .eq .tw-eq article:nth-child(even) .tw-f{grid-column:2}
+  }
+  .eq .tw-eq .tw-f{border-radius:0!important;margin:0 0 26px!important;aspect-ratio:4/5!important;position:relative;
+    clip-path:inset(calc((1 - var(--v,0))*100%) 0 0 0);filter:grayscale(calc(1 - var(--c,0))) contrast(1.08)}
+  .eq .tw-eq .tw-f::after{content:"";position:absolute;inset:0;background:linear-gradient(transparent 55%,rgba(10,7,7,.85))}
+  .eq .tw-eq .tw-f img{transform:scale(calc(1.15 - var(--v,0)*.15))}
+  .eq .tw-eq .tw-f span{font:800 9rem/1 var(--goth)!important;color:var(--blood);opacity:.8!important}
+  .eq .tw-eq h3{font:800 clamp(3.2rem,8vw,6rem)/.9 var(--goth)!important;margin:0 0 14px!important}
+  .eq .tw-eq .tw-e{font:700 .95rem/1.2 var(--cond)!important;letter-spacing:.3em!important;color:var(--blood2)!important;margin:0 0 20px!important;display:flex;align-items:center;gap:12px}
+  .eq .tw-eq .tw-e::before{content:"";width:34px;height:1px;background:currentColor}
+  .eq .tw-eq .tw-b{font-size:1.08rem!important;color:var(--bone2);max-width:460px;margin:0 0 24px!important;opacity:1!important}
+  .eq .tw-eq article > a{justify-self:start;display:inline-flex;padding:14px 22px;border:1px solid var(--bone);color:var(--bone)!important;font:700 .9rem/1 var(--cond)!important;letter-spacing:.16em;text-transform:uppercase;transition:.2s}
+  .eq .tw-eq article > a:hover{background:var(--bone);color:var(--ink)!important}
+  .eq .tw-eq .firma-a{position:absolute;top:-30px;left:-6px;font:800 1rem/1 var(--cond);letter-spacing:.3em;color:var(--mut)}
+
+  /* foto del tatuador principal en la portada */
+  .hero .foto{position:absolute;right:0;top:0;bottom:0;width:min(62vw,720px);background:center 20%/cover no-repeat;filter:grayscale(1) contrast(1.1);opacity:0;transition:opacity 1.2s;
+    -webkit-mask-image:linear-gradient(90deg,transparent,#000 40%);mask-image:linear-gradient(90deg,transparent,#000 40%);transform:translateY(calc(var(--p,0)*12vh)) scale(calc(1.04 + var(--p,0)*.08))}
+  .hero .foto.on{opacity:.75}
+  @media(max-width:899px){.hero .foto{width:100%;-webkit-mask-image:linear-gradient(transparent,#000 15%,#000 45%,transparent 85%);mask-image:linear-gradient(transparent,#000 15%,#000 45%,transparent 85%)}}
+  .hero .firma{position:relative;z-index:2;margin:-6px 0 26px;font:600 .9rem/1.3 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--bone2)}
+  .hero .firma b{display:block;font:800 1.6rem/1 var(--goth);letter-spacing:0;text-transform:none;color:var(--bone);margin-bottom:4px}
+
+  /* CONSENTIMIENTO */
+  #consentimiento .pin{height:220vh}
+  .cons{display:grid;gap:34px;align-items:center}
+  @media(min-width:900px){.cons{grid-template-columns:1.1fr .9fr}}
+  .pasos{list-style:none;margin:0 0 30px;padding:0;display:grid;gap:12px}
+  .pasos li{display:flex;gap:16px;align-items:center;padding:16px 18px;border:1px solid var(--line);color:var(--mut);transition:.35s}
+  .pasos li b{font:800 1.8rem/1 var(--goth);color:var(--mut);min-width:1.2em;transition:.35s}
+  .pasos li.on{border-color:var(--blood);color:var(--bone);background:rgba(200,16,46,.08)}
+  .pasos li.on b{color:var(--blood2)}
+  .movil{justify-self:center;width:min(62vw,250px);aspect-ratio:9/18.5;border:2px solid #3a2f2b;border-radius:34px;background:#070505;padding:22px 16px;display:flex;flex-direction:column;gap:10px;box-shadow:0 40px 80px rgba(0,0,0,.6),0 0 0 8px #120d0c}
+  .movil .t{font:800 1.5rem/1 var(--goth);text-align:center;margin-bottom:6px}
+  .movil .c{height:30px;border:1px solid #2b221f;display:flex;align-items:center;padding:0 10px;font-size:.72rem;color:var(--mut);overflow:hidden;white-space:nowrap}
+  .movil .c i{font-style:normal;color:var(--bone);display:inline-block;overflow:hidden;width:calc(var(--f,0)*100%);white-space:nowrap}
+  .movil .sig{flex:1;border:1px dashed #3a2f2b;display:grid;place-items:center}
+  .movil .sig path{fill:none;stroke:var(--bone);stroke-width:2.4;stroke-linecap:round;stroke-dasharray:1;stroke-dashoffset:calc(1 - var(--s,0))}
+  .movil .ok{height:40px;display:grid;place-items:center;font:700 .85rem/1 var(--cond);letter-spacing:.18em;text-transform:uppercase;background:#2b221f;color:var(--mut);transition:.3s}
+  .movil .ok.listo{background:var(--blood);color:#fff}
+
+  @media(max-width:899px){
+    #consentimiento h2{font-size:2.6rem;margin-bottom:16px}
+    .pasos{gap:8px;margin-bottom:18px}
+    .pasos li{padding:10px 14px;font-size:.92rem}
+    .pasos li b{font-size:1.4rem}
+    .cons > div > .btn{display:none}
+    .cons{gap:18px}
+    .movil{width:min(42vw,165px);border-radius:24px;padding:14px 10px;gap:6px}
+    .movil .t{font-size:1.05rem}
+    .movil .c{height:22px;font-size:.6rem}
+    .movil .ok{height:30px;font-size:.62rem}
+    .silueta{display:none}
+  }
+  /* FAQ / CONTACTO */
+  .faq .tw-p details{border-bottom:1px solid var(--line)!important;padding:20px 0!important}
+  .faq .tw-p summary{font:700 1.2rem/1.3 var(--sans);list-style:none;display:flex;justify-content:space-between;gap:20px}
+  .faq .tw-p summary::-webkit-details-marker{display:none}
+  .faq .tw-p summary::after{content:"+";font:800 1.8rem/1 var(--goth);color:var(--blood2);transition:transform .25s}
+  .faq .tw-p details[open] summary::after{transform:rotate(45deg)}
+  .faq .tw-p details p{color:var(--bone2)}
+  .contacto{display:grid;gap:24px}
+  @media(min-width:900px){.contacto{grid-template-columns:1fr 1fr}}
+  .dato{display:flex;gap:16px;align-items:center;padding:18px 0;border-bottom:1px solid var(--line);text-decoration:none}
+  .dato:last-child{border-bottom:0}
+  .dato .ic{flex:none;width:46px;height:46px;border:1px solid var(--blood);color:var(--blood2);display:grid;place-items:center}
+  .dato small{display:block;font:600 .75rem/1.2 var(--cond);letter-spacing:.2em;text-transform:uppercase;color:var(--mut)}
+  .dato span{font-weight:600;word-break:break-word}
+  .horario .tw-h li{padding:12px 0!important;border-color:var(--line)!important}
+  .horario .tw-hoy{color:var(--blood2)!important}
+  .nota{color:var(--mut);margin:16px 0 0}
+
+  .gran{padding:110px 0 70px;text-align:center;border-top:1px solid var(--line);overflow:hidden}
+  .gran p{font:800 clamp(4rem,17vw,13rem)/.85 var(--goth);margin:0;transform:scale(calc(.7 + var(--p,0)*.4));opacity:calc(var(--p,0)*1.6)}
+  .gran p em{font-style:normal;color:var(--blood)}
+  footer{border-top:1px solid var(--line);padding:34px 0;color:var(--mut);font-size:.85rem}
+  footer .wrap{display:flex;flex-wrap:wrap;gap:12px;justify-content:space-between}
+
+  .barra{position:fixed;left:0;right:0;bottom:0;z-index:50;display:flex;gap:10px;padding:12px 14px calc(12px + env(safe-area-inset-bottom));background:rgba(10,7,7,.94);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);border-top:1px solid var(--line)}
+  .barra .btn{flex:1;padding:15px 8px;font-size:.92rem}
+  @media(min-width:900px){.barra{display:none}}
+
+  .rev{opacity:0;transform:translateY(40px);transition:opacity .9s cubic-bezier(.2,.8,.2,1),transform .9s cubic-bezier(.2,.8,.2,1)}
+  .rev.vis{opacity:1;transform:none}
+
+  @media(prefers-reduced-motion:reduce){
+    *{animation:none!important;transition:none!important}
+    .rev{opacity:1;transform:none}
+    .titulo .l{opacity:1;transform:none}
+  }
+</style>
+</head>
+<body data-tachan="estudio-prueba" style="--tw-acento:#ff3b4f">
+
+<div class="tinta" aria-hidden="true"></div>
+<div class="demo">Web de demostración de TachánWeb · Cambia lo que quieras en el <a href="https://motor-consentimientos.vercel.app/panel/estudio-prueba" target="_blank" rel="noopener">panel del estudio</a> y recarga esta página</div>
+<div class="aviso" data-tw="aviso" hidden></div>
+
+<header id="hdr">
+  <div class="wrap nav">
+    <a class="logo" href="#inicio">Estudio <b>Prueba</b></a>
+    <nav class="links">
+      <a href="#estudio">Estudio</a>
+      <a href="#servicios">Servicios</a>
+      <a href="#idea">Tu idea</a>
+      <a href="#trabajos" data-tw-bloque="fotos" hidden>Trabajos</a>
+      <a href="#contacto">Contacto</a>
+    </nav>
+    <a class="btn btn-r" href="https://motor-consentimientos.vercel.app/firmar/estudio-prueba">Firmar consentimiento</a>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="inicio" data-sc="salida">
+    <div class="glow"></div>
+    <div class="foto" id="heroFoto" aria-hidden="true"></div>
+    <svg class="roseton" viewBox="0 0 400 400" aria-hidden="true">
+      <defs><path id="circ" d="M200 200 m-160 0 a160 160 0 1 1 320 0 a160 160 0 1 1 -320 0"/></defs>
+      <circle cx="200" cy="200" r="196"/><circle class="r" cx="200" cy="200" r="182"/><circle cx="200" cy="200" r="132"/>
+      <text><textPath href="#circ" textLength="1000">ESTUDIO PRUEBA — TATUAJES — DISEÑO PROPIO — CITA PRIVADA — </textPath></text>
+    </svg>
+    <div class="wrap in">
+      <p class="estado" data-tw="estado"><span>Mirando el horario…</span></p>
+      <h1 class="titulo" aria-label="Estudio Prueba"><span class="a" data-letras>Estudio</span><span class="b" data-letras>Prueba</span></h1>
+      <p class="firma" id="heroFirma" hidden></p>
+      <p class="eslogan" data-tw="eslogan"></p>
+      <div class="cta">
+        <a class="btn btn-r" href="#idea">Cuéntanos tu idea</a>
+        <a class="btn btn-o" href="#trabajos-o-servicios" data-ir>Ver el estudio</a>
+      </div>
+    </div>
+    <div class="baja">Baja</div>
+  </section>
+
+  <div class="cinta" data-sc aria-hidden="true">
+    <div>Realismo <i>/</i> Blackwork <i>/</i> Línea fina <i>/</i> Lettering <i>/</i> Neotradicional <i>/</i> Cover up <i>/</i> Realismo <i>/</i> Blackwork <i>/</i></div>
+    <div>Hecho a mano <i>/</i> Diseño propio <i>/</i> Cita privada <i>/</i> Hecho a mano <i>/</i> Diseño propio <i>/</i> Cita privada <i>/</i></div>
+  </div>
+
+  <!-- EL ESTUDIO -->
+  <section id="estudio">
+    <div class="pin" data-pin="estudio">
+      <div class="st">
+        <div class="wrap estudio">
+          <div>
+            <p class="lab">El estudio</p>
+            <h2>Se dibuja<br><em>contigo.</em></h2>
+            <div class="presentacion" data-tw="presentacion"></div>
+          </div>
+          <div class="flash" id="flash">
+            <svg viewBox="0 0 300 300" aria-hidden="true">
+              <!-- calavera mexicana -->
+              <path class="rell" d="M95 140 A19 17 0 1 0 133 140 A19 17 0 1 0 95 140Z M167 140 A19 17 0 1 0 205 140 A19 17 0 1 0 167 140Z M150 170 C141 182 139 192 150 194 C161 192 159 182 150 170Z M143 82 A7 7 0 1 0 157 82 A7 7 0 1 0 143 82Z"/>
+              <path class="tr" pathLength="1" d="M150 34 C88 34 52 80 54 138 C55 168 68 190 86 200 L90 232 C92 247 106 256 122 256 L178 256 C194 256 208 247 210 232 L214 200 C232 190 245 168 246 138 C248 80 212 34 150 34Z"/>
+              <path class="tr" pathLength="1" d="M144.0 140.0 Q151.1 152.1 138.3 157.6 Q136.9 171.6 123.3 168.5 Q114.0 179.0 104.7 168.5 Q91.1 171.6 89.7 157.6 Q76.9 152.1 84.0 140.0 Q76.9 127.9 89.7 122.4 Q91.1 108.4 104.7 111.5 Q114.0 101.0 123.3 111.5 Q136.9 108.4 138.3 122.4 Q151.1 127.9 144.0 140.0Z"/>
+              <path class="tr" pathLength="1" d="M216.0 140.0 Q223.1 152.1 210.3 157.6 Q208.9 171.6 195.3 168.5 Q186.0 179.0 176.7 168.5 Q163.1 171.6 161.7 157.6 Q148.9 152.1 156.0 140.0 Q148.9 127.9 161.7 122.4 Q163.1 108.4 176.7 111.5 Q186.0 101.0 195.3 111.5 Q208.9 108.4 210.3 122.4 Q223.1 127.9 216.0 140.0Z"/>
+              <path class="tr" pathLength="1" d="M150 170 C141 182 139 192 150 194 C161 192 159 182 150 170Z"/>
+              <path class="tr" pathLength="1" d="M110 222 Q150 232 190 222 M120 213 L120 240 M135 216 L135 244 M150 217 L150 245 M165 216 L165 244 M180 213 L180 240"/>
+              <path class="tr" pathLength="1" d="M105.0 186.0 L104.3 189.2 L102.9 192.0 L100.9 194.3 L98.4 196.0 L95.6 197.1 L92.7 197.3 L89.9 196.9 L87.4 195.8 L85.3 194.1 L83.7 192.0 L82.7 189.7 L82.4 187.2 L82.7 184.8 L83.5 182.6 L84.8 180.8 L86.5 179.4 L88.5 178.5 L90.5 178.1 L92.5 178.3 L94.3 178.9 L95.9 179.9 L97.0 181.3 L97.8 182.8 L98.2 184.4 L98.1 186.0 L97.6 187.4 L96.9 188.7 L95.8 189.6 L94.7 190.2 L93.5 190.5 L92.3 190.4 L91.2 190.1 L90.3 189.5 L89.7 188.8 L89.3 188.0 L89.2 187.1 L89.2 186.3 L89.5 185.7 L89.9 185.2 L90.4 184.9 M221.0 186.0 L220.3 182.8 L218.9 180.0 L216.9 177.7 L214.4 176.0 L211.6 174.9 L208.7 174.7 L205.9 175.1 L203.4 176.2 L201.3 177.9 L199.7 180.0 L198.7 182.3 L198.4 184.8 L198.7 187.2 L199.5 189.4 L200.8 191.2 L202.5 192.6 L204.5 193.5 L206.5 193.9 L208.5 193.7 L210.3 193.1 L211.9 192.1 L213.0 190.7 L213.8 189.2 L214.2 187.6 L214.1 186.0 L213.6 184.6 L212.9 183.3 L211.8 182.4 L210.7 181.8 L209.5 181.5 L208.3 181.6 L207.2 181.9 L206.3 182.5 L205.7 183.2 L205.3 184.0 L205.2 184.9 L205.2 185.7 L205.5 186.3 L205.9 186.8 L206.4 187.1"/>
+              <path class="rj" pathLength="1" d="M95 140 A19 17 0 1 0 133 140 A19 17 0 1 0 95 140Z"/>
+              <path class="rj" pathLength="1" d="M167 140 A19 17 0 1 0 205 140 A19 17 0 1 0 167 140Z"/>
+              <path class="rj" pathLength="1" d="M166.0 82.0 Q172.2 91.2 161.3 93.3 Q159.2 104.2 150.0 98.0 Q140.8 104.2 138.7 93.3 Q127.8 91.2 134.0 82.0 Q127.8 72.8 138.7 70.7 Q140.8 59.8 150.0 66.0 Q159.2 59.8 161.3 70.7 Q172.2 72.8 166.0 82.0Z"/>
+              <path class="rj" pathLength="1" d="M143 82 A7 7 0 1 0 157 82 A7 7 0 1 0 143 82Z"/>
+              <path class="rj" pathLength="1" d="M126 84 C112 74 98 78 92 90 C106 94 118 92 126 84Z M174 84 C188 74 202 78 208 90 C194 94 182 92 174 84Z"/>
+              <path class="rj" pathLength="1" d="M109.5 66 A2.5 2.5 0 1 0 114.5 66 A2.5 2.5 0 1 0 109.5 66Z M121.5 66 A2.5 2.5 0 1 0 126.5 66 A2.5 2.5 0 1 0 121.5 66Z M173.5 66 A2.5 2.5 0 1 0 178.5 66 A2.5 2.5 0 1 0 173.5 66Z M185.5 66 A2.5 2.5 0 1 0 190.5 66 A2.5 2.5 0 1 0 185.5 66Z"/>
+            </svg>
+            <p class="pct">Dibujando · <b id="pct">0%</b></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- SERVICIOS -->
+  <section id="servicios">
+    <div class="pin" data-pin="servicios">
+      <div class="st">
+        <div class="wrap">
+          <p class="lab">Servicios</p>
+          <h2>Qué <em>hacemos</em></h2>
+        </div>
+        <div class="pista" id="pista"><div data-tw="servicios"></div></div>
+        <div class="barrita"><i></i></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TU IDEA -->
+  <section id="idea" class="bloque">
+    <div class="wrap idea">
+      <div class="rev">
+        <p class="lab">Tu idea</p>
+        <h2>Cuéntanosla<br><em>en un minuto.</em></h2>
+        <p class="lead">Elige la zona, el tamaño y el estilo. Te dejamos el mensaje escrito para mandarlo por WhatsApp y te contestamos con precio y fecha.</p>
+      </div>
+      <div class="panel rev">
+        <div class="q"><span>Zona</span><div class="chips" id="cz"></div></div>
+        <div class="q"><span>Tamaño aproximado</span>
+          <div class="tam"><input type="range" id="tam" min="3" max="40" value="10" aria-label="Tamaño en centímetros"><output id="tamv">10 cm</output></div>
+          <div class="regla"></div>
+        </div>
+        <div class="q"><span>Estilo</span><div class="chips" id="ce">
+          <button type="button">Realismo</button><button type="button">Línea fina</button><button type="button">Blackwork</button><button type="button">Lettering</button><button type="button">Neotradicional</button><button type="button">No lo sé</button>
+        </div></div>
+        <div class="q"><span>Color</span><div class="chips" id="cc"><button type="button">Blanco y negro</button><button type="button">Color</button></div></div>
+        <div class="q"><span>Tu idea</span><textarea id="txt" placeholder="Ej.: retrato de mi perro, con flores alrededor…"></textarea></div>
+        <a class="btn btn-r" id="enviar" href="#contacto" style="width:100%">Mandar por WhatsApp</a>
+        <div class="previa" id="previa"></div>
+        <a data-tw="whatsapp" data-tw-solo-enlace id="wa" href="#" hidden></a>
+      </div>
+    </div>
+  </section>
+
+  <!-- TRABAJOS -->
+  <section id="trabajos" class="bloque fotos" data-tw-bloque="fotos" hidden>
+    <div class="wrap">
+      <p class="lab rev">Trabajos</p>
+      <h2 class="rev">Recién <em>salidos.</em></h2>
+      <div data-tw="fotos" id="fotos"></div>
+    </div>
+  </section>
+
+  <!-- EQUIPO -->
+  <section id="equipo" class="bloque eq" data-tw-bloque="equipo" hidden>
+    <div class="wrap">
+      <p class="lab rev">Equipo</p>
+      <h2 class="rev">Quién te <em>tatúa.</em></h2>
+      <p class="lead rev">Cada artista, con su estilo. Elige con quién quieres hacerte tu próximo tatuaje.</p>
+      <div data-tw="equipo" id="equipoBox"></div>
+    </div>
+  </section>
+
+  <!-- CONSENTIMIENTO -->
+  <section id="consentimiento">
+    <div class="pin" data-pin="cons">
+      <div class="st">
+        <div class="wrap cons">
+          <div>
+            <p class="lab">Antes de sentarte</p>
+            <h2>Cero <em>papeles.</em></h2>
+            <ol class="pasos" id="pasos">
+              <li><b>I</b>Escaneas el QR o pulsas el botón.</li>
+              <li><b>II</b>Rellenas tus datos desde tu móvil.</li>
+              <li><b>III</b>Firmas con el dedo.</li>
+              <li><b>IV</b>El estudio lo recibe al momento.</li>
+            </ol>
+            <a class="btn btn-r" href="https://motor-consentimientos.vercel.app/firmar/estudio-prueba">Firmar consentimiento</a>
+          </div>
+          <div class="movil" id="movil" aria-hidden="true">
+            <div class="t">Consentimiento</div>
+            <div class="c">Nombre&nbsp;<i>Lucía Romero García</i></div>
+            <div class="c">DNI&nbsp;<i>••••••••X</i></div>
+            <div class="c">Zona&nbsp;<i>Antebrazo</i></div>
+            <div class="sig"><svg width="170" height="80" viewBox="0 0 170 80"><path pathLength="1" d="M10 54c14-34 26-38 28-22s-6 28 4 20 16-34 24-30-4 30 6 24 14-20 22-18 2 16 12 14 16-12 24-14 16 2 30 0"/></svg></div>
+            <div class="ok" id="ok">Firmar</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- PREGUNTAS -->
+  <section id="preguntas" class="bloque faq" data-tw-bloque="preguntas">
+    <div class="wrap">
+      <p class="lab rev">Dudas</p>
+      <h2 class="rev">Lo que <em>todos</em> preguntan</h2>
+      <div data-tw="preguntas" class="rev"></div>
+    </div>
+  </section>
+
+  <!-- CONTACTO -->
+  <section id="contacto" class="bloque">
+    <div class="wrap">
+      <p class="lab rev">Contacto</p>
+      <h2 class="rev">Pásate <em>a vernos.</em></h2>
+      <div class="contacto">
+        <div class="rev">
+          <a class="dato" data-tw-bloque="whatsapp" data-tw="whatsapp" data-tw-solo-enlace href="#">
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2a10 10 0 0 0-8.6 15.1L2 22l5-1.3A10 10 0 1 0 12 2Zm5.5 14.1c-.2.6-1.3 1.2-1.8 1.2s-1 .3-3.4-.7a11.5 11.5 0 0 1-4.6-4c-.4-.5-1-1.5-1-2.8s.7-2 1-2.3.6-.3.8-.3h.6c.2 0 .4 0 .6.5l.9 2c0 .2.1.4 0 .6l-.4.6-.4.4c-.1.2-.3.3-.1.6a8 8 0 0 0 1.5 1.9 7.4 7.4 0 0 0 2.2 1.3c.3.2.4.1.6-.1l.8-1c.2-.3.4-.2.6-.1l1.9.9c.3.1.5.2.5.3s0 .8-.2 1.4Z"/></svg></span>
+            <div><small>WhatsApp</small><span data-tw="whatsapp">Escríbenos</span></div>
+          </a>
+          <a class="dato" data-tw-bloque="telefono" data-tw="telefono" data-tw-solo-enlace href="#">
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 16.9v3a2 2 0 0 1-2.2 2 19.8 19.8 0 0 1-8.6-3.1 19.5 19.5 0 0 1-6-6A19.8 19.8 0 0 1 2.1 4.2 2 2 0 0 1 4.1 2h3a2 2 0 0 1 2 1.7c.1.9.4 1.8.7 2.7a2 2 0 0 1-.5 2.1L8 9.8a16 16 0 0 0 6 6l1.3-1.3a2 2 0 0 1 2.1-.4c.9.3 1.8.6 2.7.7a2 2 0 0 1 1.7 2Z"/></svg></span>
+            <div><small>Teléfono</small><span data-tw="telefono"></span></div>
+          </a>
+          <a class="dato" data-tw-bloque="instagram" data-tw="instagram" data-tw-solo-enlace href="#">
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="18" height="18" rx="5"/><circle cx="12" cy="12" r="4"/></svg></span>
+            <div><small>Instagram</small><span data-tw="instagram"></span></div>
+          </a>
+          <a class="dato" data-tw-bloque="email" data-tw="email" data-tw-solo-enlace href="#">
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="2" y="4" width="20" height="16" rx="2"/><path d="m22 7-10 6L2 7"/></svg></span>
+            <div><small>Email</small><span data-tw="email"></span></div>
+          </a>
+          <a class="dato" data-tw-bloque="direccion" data-tw="mapa" href="#">
+            <span class="ic"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg></span>
+            <div><small>Dirección · abrir en Maps</small><span data-tw="direccion"></span></div>
+          </a>
+        </div>
+        <div class="panel horario rev">
+          <p class="lab" style="margin-bottom:10px">Horario</p>
+          <div data-tw="horario"></div>
+          <p class="nota" data-tw="horarioNota" hidden></p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <div class="gran" data-sc><p>Hasta <em>pronto.</em></p></div>
+</main>
+
+<footer>
+  <div class="wrap">
+    <span>© Estudio Prueba · Web de demostración</span>
+    <span>Web hecha por <a href="https://tachanweb.com" target="_blank" rel="noopener">TachánWeb</a></span>
+  </div>
+</footer>
+
+<div class="barra">
+  <a class="btn btn-o" href="#idea">Tu idea</a>
+  <a class="btn btn-r" href="https://motor-consentimientos.vercel.app/firmar/estudio-prueba">Firmar</a>
+</div>
+
+<!-- Contenido con el que se entrega la web. Lo que el estudio cambie en su panel lo sustituye. -->
+<script type="application/json" id="tw-inicial">{
+  "eslogan": "Realismo, blackwork y línea fina en un estudio tranquilo, limpio y sin prisas.",
+  "presentacion": "Cada tatuaje empieza con una charla. Nos cuentas tu idea, la dibujamos para ti y no tocamos la aguja hasta que te encanta.\n\nMaterial de un solo uso, cita privada y todo el tiempo que haga falta. Y el papeleo, desde tu móvil.",
+  "telefono": "600 000 000",
+  "whatsapp": "600 000 000",
+  "email": "hola@estudioprueba.es",
+  "instagram": "estudio.prueba",
+  "direccion": "Calle Ejemplo, 1, Córdoba",
+  "horario": {
+    "lunes": "",
+    "martes": "10:00 – 14:00 y 17:00 – 21:00",
+    "miercoles": "10:00 – 14:00 y 17:00 – 21:00",
+    "jueves": "10:00 – 14:00 y 17:00 – 21:00",
+    "viernes": "10:00 – 14:00 y 17:00 – 21:00",
+    "sabado": "10:00 – 14:00",
+    "domingo": ""
+  },
+  "horarioNota": "Solo con cita previa.",
+  "servicios": [
+    {"nombre": "Pequeño", "descripcion": "Piezas de hasta unos 5 cm: letras, símbolos, línea fina.", "precio": "Desde 60 €"},
+    {"nombre": "Mediano", "descripcion": "Diseño a medida en una sola sesión.", "precio": "Desde 150 €"},
+    {"nombre": "Realismo", "descripcion": "Retratos y piezas realistas en blanco y negro o color.", "precio": "Por sesión"},
+    {"nombre": "Cover up", "descripcion": "Tapamos o renovamos un tatuaje antiguo.", "precio": "Consultar"}
+  ],
+  "preguntas": [
+    {"pregunta": "¿Cómo pido cita?", "respuesta": "Escríbenos por WhatsApp con tu idea, el tamaño y la zona. Te contestamos con precio y fechas."},
+    {"pregunta": "¿Hay que dejar señal?", "respuesta": "Sí, para reservar tu día. Se descuenta del precio final."},
+    {"pregunta": "¿Puedo tatuarme si soy menor?", "respuesta": "Solo con el consentimiento firmado por tu padre, madre o tutor legal, que tiene que venir contigo."},
+    {"pregunta": "¿Cómo lo cuido después?", "respuesta": "Te explicamos los cuidados al terminar y te los llevas por escrito."}
+  ]
+}</script>
+<script src="https://motor-consentimientos.vercel.app/tachan-web.js" defer></script>
+<script>
+(function(){
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var root = document.documentElement, vh = innerHeight;
+  function clamp(v){return v<0?0:v>1?1:v}
+  function seg(p,a,b){return clamp((p-a)/(b-a))}
+
+  /* Letras del título, una a una */
+  document.querySelectorAll('[data-letras]').forEach(function(el,k){
+    var t=el.textContent; el.textContent='';
+    t.split('').forEach(function(ch,i){var s=document.createElement('span');s.className='l';s.textContent=ch;s.style.animationDelay=(k*.35+i*.06)+'s';el.appendChild(s);});
+  });
+
+  /* Botón "Ver el estudio": a trabajos si hay fotos, si no a servicios */
+  document.querySelector('[data-ir]').addEventListener('click',function(e){
+    e.preventDefault();
+    var t=document.getElementById('trabajos'); (t.hidden?document.getElementById('servicios'):t).scrollIntoView({behavior:reduce?'auto':'smooth'});
+  });
+
+  /* Apariciones */
+  var io='IntersectionObserver' in window ? new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('vis');io.unobserve(e.target);}})},{threshold:.15}) : null;
+  function revelar(){document.querySelectorAll('.rev:not(.vis)').forEach(function(e){io?io.observe(e):e.classList.add('vis')});}
+  revelar();
+
+  /* Motor de scroll */
+  var hdr=document.getElementById('hdr'), lastY=0;
+  var flash=document.getElementById('flash'), pct=document.getElementById('pct');
+  var pista=document.getElementById('pista'), pinServ=document.querySelector('[data-pin="servicios"]');
+  var pasos=[].slice.call(document.querySelectorAll('#pasos li')), movil=document.getElementById('movil'), ok=document.getElementById('ok');
+  var campos=[].slice.call(movil.querySelectorAll('.c'));
+
+  function pinP(el){var r=el.getBoundingClientRect();return clamp(-r.top/(r.height-vh));}
+
+  function medirServicios(){
+    var sobra=Math.max(0,pista.scrollWidth-innerWidth+innerWidth*.05);
+    pinServ.style.setProperty('--alto',(sobra+vh*1.15)+'px');
+    pinServ._sobra=sobra;
+  }
+
+  function frame(){
+    var y=scrollY, H=root.scrollHeight-vh;
+    root.style.setProperty('--prog',H>0?y/H:0);
+    hdr.classList.toggle('solid',y>40);
+    hdr.style.setProperty('--hdr',(y>lastY&&y>400)?'-100%':'0');
+    lastY=y;
+    if(reduce) return;
+
+    document.querySelectorAll('[data-sc]').forEach(function(el){
+      var r=el.getBoundingClientRect(), p;
+      if(el.getAttribute('data-sc')==='salida') p=clamp(-r.top/r.height);
+      else p=clamp((vh-r.top)/(vh+r.height));
+      el.style.setProperty('--p',p.toFixed(4));
+    });
+
+    /* daga que se dibuja */
+    var pe=pinP(document.querySelector('[data-pin="estudio"]'));
+    flash.style.setProperty('--d',seg(pe,0,.65).toFixed(4));
+    flash.style.setProperty('--d2',seg(pe,.45,.85).toFixed(4));
+    flash.style.setProperty('--d3',seg(pe,.8,1).toFixed(4));
+    var tp=Math.round(seg(pe,0,1)*100)+'%'; if(pct.textContent!==tp) pct.textContent=tp;
+
+    /* servicios en horizontal */
+    var ps=pinP(pinServ);
+    pista.style.setProperty('--x',(-ps*(pinServ._sobra||0))+'px');
+    pinServ.style.setProperty('--hp',ps.toFixed(4));
+
+    /* consentimiento */
+    var pc=pinP(document.querySelector('[data-pin="cons"]'));
+    pasos.forEach(function(li,i){li.classList.toggle('on',pc>=i*.24)});
+    campos.forEach(function(c,i){c.style.setProperty('--f',seg(pc,.1+i*.12,.22+i*.12).toFixed(3))});
+    movil.style.setProperty('--s',seg(pc,.5,.85).toFixed(4));
+    ok.classList.toggle('listo',pc>.85); var to=pc>.85?'✓ Enviado al estudio':'Firmar'; if(ok.textContent!==to) ok.textContent=to;
+
+    /* equipo: la foto se destapa y coge color */
+    document.querySelectorAll('#equipoBox .tw-f').forEach(function(f){
+      var r=f.getBoundingClientRect(), q=clamp((vh-r.top)/(vh*.75));
+      f.style.setProperty('--v',seg(q,0,.7).toFixed(3)); f.style.setProperty('--c',seg(q,.6,1).toFixed(3));
+    });
+
+    /* fotos con parallax */
+    document.querySelectorAll('#fotos a').forEach(function(a){
+      var r=a.getBoundingClientRect(); a.style.setProperty('--p',clamp((vh-r.top)/(vh*.6)).toFixed(3));
+    });
+  }
+  var ticking=false;
+  function onScroll(){if(!ticking){ticking=true;requestAnimationFrame(function(){ticking=false;frame();});}}
+  addEventListener('scroll',onScroll,{passive:true});
+  addEventListener('resize',function(){vh=innerHeight;medirServicios();frame();});
+
+  /* Cuando el panel rellena cosas, volver a medir */
+  var mo=new MutationObserver(function(){requestAnimationFrame(function(){medirServicios();revelar();frame();});});
+  document.querySelectorAll('[data-tw="servicios"],[data-tw="fotos"],[data-tw="equipo"]').forEach(function(el){mo.observe(el,{childList:true});});
+  if(reduce){document.querySelectorAll('.pin').forEach(function(p){p.style.height='auto'});document.querySelectorAll('.pin .st').forEach(function(s){s.style.position='static';s.style.height='auto';s.style.padding='100px 0'});
+    flash.style.cssText='--d:1;--d2:1;--d3:1';movil.style.setProperty('--s',1);pasos.forEach(function(l){l.classList.add('on')});pista.style.overflowX='auto';}
+  /* Equipo: numerar artistas y poner al primero en la portada */
+  function prepararEquipo(){
+    var arts=document.querySelectorAll('#equipoBox article');
+    arts.forEach(function(a,i){ if(!a.querySelector('.firma-a')){var n=document.createElement('span');n.className='firma-a';n.textContent=('0'+(i+1)).slice(-2)+' / '+('0'+arts.length).slice(-2);a.appendChild(n);}
+      var ig=a.querySelector(':scope > a'); if(ig && ig.textContent.charAt(0)==='@') ig.textContent='Ver su Instagram';});
+    var primero=arts[0], img=primero&&primero.querySelector('.tw-f img'), hf=document.getElementById('heroFoto'), fi=document.getElementById('heroFirma');
+    if(img && !hf.classList.contains('on')){ hf.style.backgroundImage='url("'+img.src.replace(/"/g,'')+'")'; hf.classList.add('on');
+      var nom=primero.querySelector('h3'), est=primero.querySelector('.tw-e');
+      fi.innerHTML=''; var b=document.createElement('b'); b.textContent=nom?nom.textContent:''; fi.appendChild(b);
+      fi.appendChild(document.createTextNode(est?est.textContent:'Tatuador')); fi.hidden=false; }
+  }
+  new MutationObserver(function(){requestAnimationFrame(prepararEquipo);}).observe(document.getElementById('equipoBox'),{childList:true});
+  medirServicios(); frame();
+  if(document.fonts) document.fonts.ready.then(function(){medirServicios();frame();});
+
+  /* Constructor de idea → WhatsApp */
+  var zonas=['Antebrazo','Brazo','Hombro','Pecho','Abdomen / costillas','Espalda','Muslo','Gemelo / tobillo','Mano','Cuello'];
+  var cz=document.getElementById('cz');
+  zonas.forEach(function(z){var b=document.createElement('button');b.type='button';b.textContent=z;cz.appendChild(b);});
+  var sel={zona:'',estilo:'',color:''};
+  function grupo(id,key){
+    var g=document.getElementById(id);
+    g.addEventListener('click',function(e){
+      var b=e.target.closest('button'); if(!b) return;
+      var on=b.getAttribute('aria-pressed')!=='true';
+      g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false')});
+      if(on) b.setAttribute('aria-pressed','true');
+      sel[key]=on?b.textContent:'';
+      previa();
+    });
+    g.querySelectorAll('button').forEach(function(x){x.setAttribute('aria-pressed','false')});
+  }
+  grupo('cz','zona');grupo('ce','estilo');grupo('cc','color');
+  var tam=document.getElementById('tam'), tamv=document.getElementById('tamv'), txt=document.getElementById('txt');
+  tam.addEventListener('input',function(){tamv.textContent=tam.value+' cm';previa();});
+  txt.addEventListener('input',previa);
+  function mensaje(){
+    var l=['¡Hola! Quiero pedir presupuesto para un tatuaje:'];
+    if(txt.value.trim()) l.push('• Idea: '+txt.value.trim());
+    if(sel.zona) l.push('• Zona: '+sel.zona);
+    l.push('• Tamaño: unos '+tam.value+' cm');
+    if(sel.estilo) l.push('• Estilo: '+sel.estilo);
+    if(sel.color) l.push('• '+sel.color);
+    return l.join('\n');
+  }
+  function previa(){document.getElementById('previa').textContent=mensaje();}
+  previa();
+  document.getElementById('enviar').addEventListener('click',function(e){
+    var base=document.getElementById('wa').getAttribute('href')||'';
+    if(!/^https:\/\/wa\.me\//.test(base)) return; // sin WhatsApp en el panel: baja a contacto
+    e.preventDefault();
+    window.open(base+'?text='+encodeURIComponent(mensaje()),'_blank','noopener');
+  });
+})();
+</script>
+</body>
+</html>
