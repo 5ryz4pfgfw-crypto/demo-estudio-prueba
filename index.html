@@ -725,7 +725,7 @@
 /* Trabajos: rejilla limpia, filtro por zona (solo si el estudio las pone) y visor con zoom */
 (function(){
   var ID=document.body.getAttribute('data-tachan');
-  var ORDEN=['Antebrazo','Brazo','Hombro','Pecho','Abdomen / costillas','Espalda','Muslo','Gemelo / tobillo','Mano','Cuello'];
+  var ORDEN=['Antebrazo','Brazo','Hombro','Mano','Pecho','Abdomen / costillas','Espalda','Cuello','Muslo','Gemelo / tobillo','Pie']; /* el mismo orden que en el panel */
   var gal=document.getElementById('gal'), zbox=document.getElementById('galZonas'), mas=document.getElementById('galMas');
   var reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
   var FOTOS=[], filtro='', PASO=8, limite=PASO, vista=[];
