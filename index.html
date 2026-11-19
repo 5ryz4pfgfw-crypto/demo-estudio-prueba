@@ -172,6 +172,22 @@
   .gal-mas{display:flex;margin:34px auto 0}
   .gal-mas[hidden]{display:none}
 
+  /* LUPA (opcional: sale si el estudio marca una foto en su panel) */
+  .lupa-g{display:grid;gap:clamp(30px,5vw,70px);align-items:center}
+  @media(min-width:900px){.lupa-g{grid-template-columns:.85fr 1.15fr}}
+  .lupa-g p.txt{color:var(--bone2);font-size:1.05rem;line-height:1.65;max-width:40ch;margin:0}
+  .lupa-caja{position:relative;overflow:hidden;border:1px solid var(--line);background:var(--ink3);touch-action:none;user-select:none;-webkit-user-select:none;cursor:crosshair;
+    clip-path:inset(calc((1 - var(--p,1)) * 18%) calc((1 - var(--p,1)) * 10%));transition:clip-path .1s linear}
+  .lupa-caja img{display:block;width:100%;max-height:80svh;object-fit:cover;pointer-events:none;filter:grayscale(.35)}
+  .lente{position:absolute;left:0;top:0;width:clamp(150px,30vw,210px);aspect-ratio:1;border-radius:50%;pointer-events:none;background-repeat:no-repeat;background-color:var(--ink);
+    border:3px solid var(--blood);box-shadow:0 0 0 6px rgba(10,7,7,.55),0 0 40px rgba(200,16,46,.45),0 18px 50px rgba(0,0,0,.7);
+    transform:translate(-50%,-50%) scale(.6);opacity:0;transition:opacity .25s,transform .25s}
+  .lente::after{content:"";position:absolute;inset:10px;border-radius:50%;border:1px solid rgba(239,230,214,.25)}
+  .lente.on{opacity:1;transform:translate(-50%,-50%) scale(1)}
+  .lupa-pista{position:absolute;left:50%;bottom:16px;translate:-50% 0;background:rgba(10,7,7,.8);border:1px solid var(--line);color:var(--bone);
+    font:600 .85rem/1 var(--cond);letter-spacing:.2em;text-transform:uppercase;padding:11px 16px;white-space:nowrap;transition:opacity .3s}
+  .lupa-caja.usada .lupa-pista{opacity:0}
+
   /* VISOR */
   .vis-f{position:fixed;inset:0;z-index:120;background:var(--ink);display:none;flex-direction:column}
   .vis-f.open{display:flex}
@@ -431,6 +447,21 @@
   </section>
 
   <!-- EQUIPO -->
+  <section id="detalle" class="bloque" hidden>
+    <div class="wrap lupa-g">
+      <div>
+        <p class="lab rev">Al detalle</p>
+        <h2 class="rev">Acércate<em>.</em></h2>
+        <p class="txt rev">Lo que separa un buen tatuaje de uno cualquiera está en lo pequeño: cada línea, cada sombra, cada degradado. Pasa el dedo o el ratón por la foto y míralo como si lo tuvieras delante.</p>
+      </div>
+      <div class="lupa-caja" id="lupaCaja" data-sc>
+        <img id="lupaImg" alt="Trabajo del estudio visto con lupa">
+        <div class="lente" id="lente" aria-hidden="true"></div>
+        <span class="lupa-pista">Pasa el dedo por aquí</span>
+      </div>
+    </div>
+  </section>
+
   <section id="equipo" class="bloque eq" data-tw-bloque="equipo" hidden>
     <div class="wrap">
       <p class="lab rev">Equipo</p>
@@ -811,10 +842,40 @@
   });
   img.addEventListener('pointercancel',function(){sx=null;});
 
+  /* Lupa: el cliente la mueve con el dedo o el ratón. Mientras no la toca, se pasea sola al hacer scroll para enseñar qué hace. */
+  var caja=document.getElementById('lupaCaja'), lente=document.getElementById('lente'), limg=document.getElementById('lupaImg'), Z=2.6, tocada=false;
+  function enfocar(x,y){
+    var r=caja.getBoundingClientRect(), nw=limg.naturalWidth, nh=limg.naturalHeight; if(!nw) return;
+    var s=Math.max(r.width/nw,r.height/nh), dw=nw*s, dh=nh*s, ox=(r.width-dw)/2, oy=(r.height-dh)/2, t=lente.offsetWidth/2;
+    lente.style.left=x+'px'; lente.style.top=y+'px';
+    lente.style.backgroundImage='url("'+limg.src.replace(/"/g,'')+'")';
+    lente.style.backgroundSize=(dw*Z)+'px '+(dh*Z)+'px';
+    lente.style.backgroundPosition=(-(x-ox)*Z+t)+'px '+(-(y-oy)*Z+t)+'px';
+    lente.classList.add('on');
+  }
+  function mover(e){
+    var r=caja.getBoundingClientRect(), x=e.clientX-r.left, y=e.clientY-r.top;
+    if(x<0||y<0||x>r.width||y>r.height){ lente.classList.remove('on'); return; }
+    tocada=true; caja.classList.add('usada'); enfocar(x,y);
+  }
+  caja.addEventListener('pointerdown',mover);
+  caja.addEventListener('pointermove',function(e){ if(e.pointerType==='mouse'||e.buttons) mover(e); });
+  caja.addEventListener('pointerleave',function(){ lente.classList.remove('on'); });
+  caja.addEventListener('pointerup',function(e){ if(e.pointerType!=='mouse') lente.classList.remove('on'); });
+  window.addEventListener('scroll',function(){
+    if(tocada || reduce || document.getElementById('detalle').hidden) return;
+    var r=caja.getBoundingClientRect(), vh=innerHeight, p=(vh-r.top)/(vh+r.height);
+    if(p<.25||p>.85){ lente.classList.remove('on'); return; }
+    var q=(p-.25)/.6; enfocar(r.width*(.25+.5*q), r.height*(.5+.22*Math.sin(q*Math.PI*2)));
+  },{passive:true});
+
   /* Datos: las fotos y su zona vienen del panel del estudio */
   function cargar(fotos){
     FOTOS=(fotos||[]).filter(function(f){return /^https:\/\//.test(f.url||'')}).map(function(f){return {url:f.url,ancho:+f.ancho||0,alto:+f.alto||0,zona:String(f.zona||'').trim()}});
     if(filtro && !FOTOS.some(function(f){return f.zona===filtro})) filtro='';
+    var l=(fotos||[]).filter(function(f){return f.lupa && /^https:\/\//.test(f.url||'')})[0];
+    document.getElementById('detalle').hidden=!l;
+    if(l) document.getElementById('lupaImg').src=l.url;
     zonas(); pintar();
   }
   if(ID) fetch('https://motor-consentimientos.vercel.app/api/web?id='+encodeURIComponent(ID))
